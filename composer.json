@@ -1,0 +1,17 @@
+{
+  "name": "zx/php-code-generator",
+  "description": "php代码生成器",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^7.2|^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "ZX\\": "src/"
+    },
+    "files": [
+    ]
+  },
+  "minimum-stability": "dev"
+}
