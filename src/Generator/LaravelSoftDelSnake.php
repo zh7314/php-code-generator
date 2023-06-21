@@ -7,7 +7,7 @@ use ZX\MysqlOperation;
 use ZX\File;
 use ZX\BaseGenerator;
 
-class LaravelZx extends BaseGenerator
+class LaravelSoftDelSnake extends BaseGenerator
 {
 
     public static function getClassName()

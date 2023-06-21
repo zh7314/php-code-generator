@@ -11,8 +11,10 @@ include_once './../src/Generator/LaravelStd.php';
 
 use ZX\MysqlOperation;
 use ZX\File;
-use ZX\Generator\LaravelZx;
-use ZX\Generator\LaravelStd;
+use ZX\Generator\LaravelCamel;
+use ZX\Generator\LaravelSnake;
+use ZX\Generator\LaravelSoftDelCamel;
+use ZX\Generator\LaravelSoftDelSnake;
 
  $param = [
      'type' => 'mysql',
@@ -26,10 +28,10 @@ use ZX\Generator\LaravelStd;
 
 MysqlOperation::setConnection($param);
 
-//非软删除版本
-File::deldir('./' . LaravelStd::getAppPath() . DIRECTORY_SEPARATOR);
-LaravelStd::generatorAllTable();
-LaravelStd::generatorAllRouter();
+//非软删除版本 变量蛇形命名,
+File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
+LaravelSnake::generatorAllTable();
+LaravelSnake::generatorAllRouter();
 
 // 软删除版本代码
 //File::deldir('./' . LaravelZx::getAppPath() . DIRECTORY_SEPARATOR);

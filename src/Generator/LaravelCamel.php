@@ -7,7 +7,7 @@ use ZX\MysqlOperation;
 use ZX\File;
 use ZX\BaseGenerator;
 
-class LaravelStd extends BaseGenerator
+class LaravelCamel extends BaseGenerator
 {
 
     public static function getClassName()

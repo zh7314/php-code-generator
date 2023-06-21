@@ -1,0 +1,8 @@
+Route::group(['prefix' => '{$camelizeTableName}'], function () {
+        Route::post('/getList', [\App\Http\Controllers\Admin\{upTableName}Controller::class, 'getList']);
+        Route::post('/getAll', [\App\Http\Controllers\Admin\{upTableName}Controller::class, 'getAll']);
+        Route::post('/getOne', [\App\Http\Controllers\Admin\{upTableName}Controller::class, 'getOne']);
+        Route::post('/add', [\App\Http\Controllers\Admin\{upTableName}Controller::class, 'add']);
+        Route::post('/save', [\App\Http\Controllers\Admin\{upTableName}Controller::class, 'save']);
+        Route::post('/delete', [\App\Http\Controllers\Admin\{upTableName}Controller::class, 'delete']);
+    });
