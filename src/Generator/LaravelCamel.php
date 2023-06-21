@@ -103,6 +103,8 @@ class LaravelCamel extends BaseGenerator
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
+            //蛇形转驼峰
+            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
 
             $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
             $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
@@ -122,7 +124,8 @@ class LaravelCamel extends BaseGenerator
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
-
+            //蛇形转驼峰
+            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
             $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
         }
         return $return;
@@ -176,7 +179,8 @@ class LaravelCamel extends BaseGenerator
             }
 
 //            $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
-
+            //蛇形转驼峰
+            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
             $return = $return . 'if (!empty($where' . "['{$v['COLUMN_NAME']}']" . ')) {' . PHP_EOL .
                 '$' . $lcTableName . '=' . '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
         }

@@ -1,8 +1,11 @@
 namespace App\Models;
 
+use Eloquence\Behaviours\CamelCasing;
 use Illuminate\Database\Eloquent\Model;
 
 class {upTableName} extends Model {
+
+    use CamelCasing;
 
     protected $table = '{tableName}';
     protected $primaryKey = 'id';
