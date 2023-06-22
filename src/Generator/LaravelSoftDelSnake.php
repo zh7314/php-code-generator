@@ -178,7 +178,7 @@ class LaravelSoftDelSnake extends BaseGenerator
 //            $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
 
             $return = $return . 'if (!empty($where' . "['{$v['COLUMN_NAME']}']" . ')) {' . PHP_EOL .
-                '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
+                '$' . $lcTableName . '=' . '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
         }
         return $return;
     }

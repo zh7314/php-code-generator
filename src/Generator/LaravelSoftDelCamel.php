@@ -105,6 +105,7 @@ class LaravelSoftDelCamel extends BaseGenerator
             }
             //蛇形转驼峰
             $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+
             $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
             $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
         }
@@ -181,7 +182,7 @@ class LaravelSoftDelCamel extends BaseGenerator
             //蛇形转驼峰
             $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
             $return = $return . 'if (!empty($where' . "['{$v['COLUMN_NAME']}']" . ')) {' . PHP_EOL .
-                '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
+                '$' . $lcTableName . '=' . '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
         }
         return $return;
     }
