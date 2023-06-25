@@ -22,7 +22,7 @@ $param = [
     'type' => 'mysql',
     'host' => '127.0.0.1',
     'port' => '3306',
-    'dbname' => 'qyy_v2',
+    'dbname' => 'web_v2',
     'charset' => 'utf8',
     'user' => 'root',
     'pwd' => 'root'
@@ -34,18 +34,18 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量蛇形命名模版
  */
 
-//File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
-//LaravelSnake::generatorAllTable();
-//LaravelSnake::generatorAllRouter();
+File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
+LaravelSnake::generatorAllTable();
+LaravelSnake::generatorAllRouter();
 
 
 /*
  * 非软删除版本 变量驼峰命名模版
  */
 
-File::deldir('./' . LaravelCamel::getAppPath() . DIRECTORY_SEPARATOR);
-LaravelCamel::generatorAllTable();
-LaravelCamel::generatorAllRouter();
+//File::deldir('./' . LaravelCamel::getAppPath() . DIRECTORY_SEPARATOR);
+//LaravelCamel::generatorAllTable();
+//LaravelCamel::generatorAllRouter();
 
 /*
  * 软删除版本代码，变量蛇形命名模版
