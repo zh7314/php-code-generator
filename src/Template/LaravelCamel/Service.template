@@ -8,15 +8,15 @@ use App\Utils\GlobalMsg;
 class {upTableName}Service
 {
 
-    public static function getList(array $where = [], int $page = 0, int $page_size = 0)
+    public static function getList(array $where = [], int $page = 0, int $pageSize = 0)
     {
         ${lcTableName} = new {upTableName}();
 
         {ifParamString}
         $count = ${lcTableName}->count();
 
-        if ($page > 0 && $page_size >0) {
-           ${lcTableName} = ${lcTableName}->forPage($page, $page_size);
+        if ($page > 0 && $pageSize >0) {
+           ${lcTableName} = ${lcTableName}->forPage($page, $pageSize);
         }
 
         $list = ${lcTableName}->orderBy('id', 'desc')->get()->toArray();

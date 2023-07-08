@@ -16,10 +16,10 @@ class {upTableName}Controller extends Controller{
         try {
             $where = [];
             $page = parameterCheck($request->page,'int',0);
-            $page_size = parameterCheck($request->page_size,'int',0);
+            $pageSize = parameterCheck($request->pageSize,'int',0);
 
             {paramString}
-            $data = {upTableName}Service::getList($where,$page,$page_size);
+            $data = {upTableName}Service::getList($where,$page,$pageSize);
 
             return $this->success($data);
         } catch (Throwable $e) {
