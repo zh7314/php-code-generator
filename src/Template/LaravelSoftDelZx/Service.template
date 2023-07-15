@@ -10,13 +10,13 @@ class {upTableName}Service
 
     public static function getList(array $where = [], int $page = 0, int $pageSize = 0)
     {
-        ${lcTableName} = new {upTableName}();
+        ${lcTableName} = {upTableName}::where(GlobalCode::IS_DELETE, GlobalCode::NORMAL);
 
         {ifParamString}
         $count = ${lcTableName}->count();
 
         if ($page > 0 && $pageSize >0) {
-           ${lcTableName} = ${lcTableName}->forPage($page, $pageSize);
+            ${lcTableName}->forPage($page, $pageSize);
         }
 
         $list = ${lcTableName}->orderBy('id', 'desc')->get()->toArray();
@@ -26,7 +26,7 @@ class {upTableName}Service
 
     public static function getAll(array $where = [])
     {
-            ${lcTableName} = new {upTableName}();
+            ${lcTableName} = {upTableName}::where(GlobalCode::IS_DELETE, GlobalCode::NORMAL);
 
             {ifParamString}
             return ${lcTableName}->orderBy('id', 'desc')->get()->toArray();
@@ -34,7 +34,7 @@ class {upTableName}Service
 
     public static function getOne(int $id = 0)
     {
-             ${lcTableName} = {upTableName}::where('id', $id)->first();
+             ${lcTableName} = {upTableName}::where(GlobalCode::IS_DELETE, GlobalCode::NORMAL)->where('id', $id)->first();
              if (${lcTableName} == null) {
                  throw new Exception(GlobalMsg::GET_HAS_NO);
              }
@@ -44,17 +44,18 @@ class {upTableName}Service
     public static function add(array $where = [])
     {
 
-            ${lcTableName} = new {upTableName}();
+            ${lcTableName} = new {upTableName};
             if (!empty($where['id'])) {
                 throw new Exception(GlobalMsg::ADD_ID);
             }
             {paramString}
 
             $res = ${lcTableName}->save();
-            if($res == false){
+
+             if($res == false){
                 throw new Exception(GlobalMsg::SAVE_FAIL);
-            }
-            return $res;
+             }
+             return $res;
     }
 
     public static function save(array $where = [])
@@ -62,7 +63,7 @@ class {upTableName}Service
             if (empty($where['id'])) {
                 throw new Exception(GlobalMsg::SAVE_NO_ID);
             }
-            ${lcTableName} = {upTableName}::where('id', $where['id'])->first();
+            ${lcTableName} = {upTableName}::where(GlobalCode::IS_DELETE, GlobalCode::NORMAL)->where('id', $where['id'])->first();
             if(${lcTableName} == null){
                 throw new Exception(GlobalMsg::SAVE_HAS_NO);
             }
@@ -78,14 +79,15 @@ class {upTableName}Service
 
     public static function delete(int $id = 0)
     {
-        ${lcTableName} = {upTableName}::where('id', $id)->first();
+        ${lcTableName} = {upTableName}::where(GlobalCode::IS_DELETE, GlobalCode::NORMAL)->where('id', $id)->first();
         if (${lcTableName} == null) {
             throw new Exception(GlobalMsg::DEL_HAS_NO);
         }
-         $res = ${lcTableName}->delete();
-         if($res == false){
+        ${lcTableName}->is_delete = GlobalCode::DELETE;
+        $res = ${lcTableName}->save();
+        if($res == false){
             throw new Exception(GlobalMsg::SAVE_FAIL);
-         }
-         return $res;
+        }
+        return $res;
     }
 }

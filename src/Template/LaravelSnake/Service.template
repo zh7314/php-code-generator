@@ -82,7 +82,7 @@ class {upTableName}Service
         if (${lcTableName} == null) {
             throw new Exception(GlobalMsg::DEL_HAS_NO);
         }
-         $res = ${lcTableName}->save();
+         $res = ${lcTableName}->delete();
          if($res == false){
             throw new Exception(GlobalMsg::SAVE_FAIL);
          }

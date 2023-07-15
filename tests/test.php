@@ -10,6 +10,7 @@ include_once './../src/Generator/LaravelCamel.php';
 include_once './../src/Generator/LaravelSnake.php';
 include_once './../src/Generator/LaravelSoftDelCamel.php';
 include_once './../src/Generator/LaravelSoftDelSnake.php';
+include_once './../src/Generator/LaravelSoftDelZx.php';
 
 use ZX\MysqlOperation;
 use ZX\File;
@@ -17,6 +18,7 @@ use ZX\Generator\LaravelCamel;
 use ZX\Generator\LaravelSnake;
 use ZX\Generator\LaravelSoftDelCamel;
 use ZX\Generator\LaravelSoftDelSnake;
+use ZX\Generator\LaravelSoftDelZx;
 
 $param = [
     'type' => 'mysql',
@@ -64,9 +66,10 @@ LaravelSnake::generatorAllRouter();
 //LaravelSoftDelCamel::generatorAllRouter();
 
 /*
- * 单个表生产
+ * 软删除版本特殊代码，变量蛇形命名模版
  */
 
-//LaravelSnake::generatorTable('admin');
-//LaravelSnake::generatorTable('admin_group');
+//File::deldir('./' . LaravelSoftDelZx::getAppPath() . DIRECTORY_SEPARATOR);
+//LaravelSoftDelZx::generatorAllTable();
+//LaravelSoftDelZx::generatorAllRouter();
 

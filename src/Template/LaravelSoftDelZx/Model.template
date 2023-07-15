@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class {upTableName} extends Model {
 
+    use CamelCasing;
     use SoftDeletes;
 
     protected $table = '{tableName}';
