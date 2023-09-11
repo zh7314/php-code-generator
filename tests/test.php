@@ -11,7 +11,11 @@ include_once './../src/Generator/LaravelSnake.php';
 include_once './../src/Generator/LaravelSoftDelCamel.php';
 include_once './../src/Generator/LaravelSoftDelSnake.php';
 include_once './../src/Generator/LaravelSoftDelZx.php';
+include_once './../src/Generator/WebmanCamel.php';
+include_once './../src/Generator/WebmanSnake.php';
 
+use ZX\Generator\WebmanCamel;
+use ZX\Generator\WebmanSnake;
 use ZX\MysqlOperation;
 use ZX\File;
 use ZX\Generator\LaravelCamel;
@@ -24,7 +28,7 @@ $param = [
     'type' => 'mysql',
     'host' => '127.0.0.1',
     'port' => '3306',
-    'dbname' => 'web_v2',
+    'dbname' => 'web',
     'charset' => 'utf8',
     'user' => 'root',
     'pwd' => 'root'
@@ -36,9 +40,9 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量蛇形命名模版
  */
 
-File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
-LaravelSnake::generatorAllTable();
-LaravelSnake::generatorAllRouter();
+//File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
+//LaravelSnake::generatorAllTable();
+//LaravelSnake::generatorAllRouter();
 
 
 /*
@@ -73,3 +77,18 @@ LaravelSnake::generatorAllRouter();
 //LaravelSoftDelZx::generatorAllTable();
 //LaravelSoftDelZx::generatorAllRouter();
 
+/*
+ * 非软删除版本 变量蛇形命名模版
+ */
+
+File::deldir('./' . WebmanSnake::getAppPath() . DIRECTORY_SEPARATOR);
+WebmanSnake::generatorAllTable();
+WebmanSnake::generatorAllRouter();
+
+/*
+ * 非软删除版本 变量驼峰命名模版
+ */
+
+//File::deldir('./' . WebmanCamel::getAppPath() . DIRECTORY_SEPARATOR);
+//WebmanCamel::generatorAllTable();
+//WebmanCamel::generatorAllRouter();
