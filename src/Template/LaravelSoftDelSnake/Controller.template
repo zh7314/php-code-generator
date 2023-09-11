@@ -15,8 +15,8 @@ class {upTableName}Controller extends Controller{
     public function getList(Request $request) {
         try {
             $where = [];
-            $page = parameterCheck($request->page,'int',0);
-            $pageSize = parameterCheck($request->pageSize,'int',0);
+            $page = parameterCheck($request->input('page'),'int',0);
+            $pageSize = parameterCheck($request->input('pageSize'),'int',0);
 
             {paramString}
             $data = {upTableName}Service::getList($where,$page,$pageSize);
@@ -46,7 +46,7 @@ class {upTableName}Controller extends Controller{
         try {
             $where = [];
 
-            $where['id'] = parameterCheck($request->id, 'int', 0);
+            $where['id'] = parameterCheck($request->input('id'), 'int', 0);
 
             $data = {upTableName}Service::getOne($where['id']);
 
@@ -77,7 +77,7 @@ class {upTableName}Controller extends Controller{
         DB::beginTransaction();
         try {
             $where = [];
-            $where['id']= parameterCheck($request->id,'int',0);
+            $where['id'] = parameterCheck($request->input('id'), 'int', 0);
             {paramString}
             $data = {upTableName}Service::save($where);
 
@@ -94,7 +94,7 @@ class {upTableName}Controller extends Controller{
         DB::beginTransaction();
         try {
             $where = [];
-            $where['id']= parameterCheck($request->id,'int',0);
+            $where['id'] = parameterCheck($request->input('id'), 'int', 0);
             $data = {upTableName}Service::delete($where['id']);
 
             DB::commit();
