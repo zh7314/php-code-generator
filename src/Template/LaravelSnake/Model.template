@@ -9,5 +9,4 @@ class {upTableName} extends Model {
     protected $guarded = [];
 
     public $timestamps = false;
-
 }
