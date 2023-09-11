@@ -56,16 +56,16 @@ class File
         }
     }
 
-    public static function generatorPath(string $path = './')
+    public static function generatorPath(string $path = './', BaseGenerator $Generator = null)
     {
-        $allControllerPath = $path . BaseGenerator::getAppPath() . DIRECTORY_SEPARATOR . BaseGenerator::getHttpPath() . DIRECTORY_SEPARATOR . BaseGenerator::getControllerPath();
-        BaseGenerator::setAllControllerPath($allControllerPath);
+        $allControllerPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getHttpPath() . DIRECTORY_SEPARATOR . $Generator::getControllerPath();
+        $Generator::setAllControllerPath($allControllerPath);
 
-        $allServicePath = $path . BaseGenerator::getAppPath() . DIRECTORY_SEPARATOR . BaseGenerator::getServicePath();
-        BaseGenerator::setAllServicePath($allServicePath);
+        $allServicePath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getServicePath();
+        $Generator::setAllServicePath($allServicePath);
 
-        $allModelPath = $path . BaseGenerator::getAppPath() . DIRECTORY_SEPARATOR . BaseGenerator::getModelPath();
-        BaseGenerator::setAllModelPath($allModelPath);
+        $allModelPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getModelPath();
+        $Generator::setAllModelPath($allModelPath);
 
         self::makeFile($allControllerPath);
         self::makeFile($allServicePath);

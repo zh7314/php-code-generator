@@ -9,6 +9,20 @@ use ZX\BaseGenerator;
 
 class WebmanCamel extends BaseGenerator
 {
+    protected static $controllerPrefix = '';
+    protected static $controllerSuffix = 'Controller';
+    protected static $servicePrefix = '';
+    protected static $serviceSuffix = 'Service';
+    protected static $modelPrefix = '';
+    protected static $modelSuffix = 'Model';
+    protected static $controllerPath = 'controller' . DIRECTORY_SEPARATOR . 'Admin';
+    protected static $servicePath = 'service' . DIRECTORY_SEPARATOR . 'Admin';
+    protected static $modelPath = 'model';
+    protected static $appPath = 'app';
+    protected static $httpPath = 'Http';
+    protected static $allControllerPath = 'Controllers';
+    protected static $allServicePath = 'Services';
+    protected static $allModelPath = 'Models';
 
     public static function getClassName()
     {
