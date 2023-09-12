@@ -2,17 +2,79 @@
 
 namespace ZX\Generator;
 
-use ZX\Hump;
-use ZX\MysqlOperation;
-use ZX\File;
 use ZX\BaseGenerator;
+use ZX\Tool\File;
+use ZX\Tool\Hump;
+use ZX\Tool\MysqlOperation;
 
 class WebmanSnake extends BaseGenerator
 {
+    //控制器文件后缀
+    protected static $controllerSuffix = 'Controller';
+    //服务文件后缀
+    protected static $serviceSuffix = 'Service';
+    //模型文件后缀
+    protected static $modelSuffix = '';
+    //控制器文件路径
+    protected static $controllerPath = 'controller' . DIRECTORY_SEPARATOR . 'Admin';
+    //服务文件路径
+    protected static $servicePath = 'service' . DIRECTORY_SEPARATOR . 'Admin';
+    //模型文件路径
+    protected static $modelPath = 'model';
+    //应用根路径
+    protected static $appPath = 'app';
+    //控制器目录名称
+    protected static $allControllerPath = '';
+    //服务目录名称
+    protected static $allServicePath = '';
+    //模型目录名称
+    protected static $allModelPath = '';
+    //模版文件路径
+    protected static $templatePath = __DIR__ . DIRECTORY_SEPARATOR . 'Template';
+    //文件头部
+    protected static $fileHeaer = '<?php ';
+    //不需要处理的字段
+    protected static $notDeal = ['id', 'create_at', 'update_at', 'is_delete', 'delete_at', 'create_time', 'update_time'];
+
+    //获取app path
+    public static function getAppPath()
+    {
+        return self::$appPath;
+    }
+
+    public static function getControllerPath()
+    {
+        return self::$controllerPath;
+    }
+
+    public static function getServicePath()
+    {
+        return self::$servicePath;
+    }
+
+    public static function getModelPath()
+    {
+        return self::$modelPath;
+    }
 
     public static function getClassName()
     {
         return basename(__CLASS__);
+    }
+
+    public static function setAllControllerPath(string $allControllerPath)
+    {
+        self::$allControllerPath = $allControllerPath;
+    }
+
+    public static function setAllServicePath(string $allServicePath)
+    {
+        self::$allServicePath = $allServicePath;
+    }
+
+    public static function setAllModelPath(string $allModelPath)
+    {
+        self::$allModelPath = $allModelPath;
     }
 
     public static function generatorAllTable()
@@ -28,10 +90,10 @@ class WebmanSnake extends BaseGenerator
 
     public static function generatorTable(string $tableName)
     {
-        //使用前手动删除生成的app
+        //获取表的字段
         $column = MysqlOperation::getTableColumn($tableName);
         //生成目录
-        File::generatorPath();
+        File::generatorPath(new self());
         //生产控制器
         self::generatorController($tableName, $column);
         //生产服务
@@ -47,7 +109,7 @@ class WebmanSnake extends BaseGenerator
         //列数据
         $paramString = self::generatorParamString($column);
 
-        $content = File::getFileContent(false, 'Controller.template', self::getClassName());
+        $content = File::getFileContent(new self(), 'Controller.template', self::getClassName());
 
         $search = ['{upTableName}', '{paramString}'];
         $replace = [$upTableName, $paramString];
@@ -65,7 +127,7 @@ class WebmanSnake extends BaseGenerator
 
         $paramString = self::generatorParamServiceString($tableName, $column);
 
-        $content = File::getFileContent(false, 'Service.template', self::getClassName());
+        $content = File::getFileContent(new self(), 'Service.template', self::getClassName());
 
         $ifParamString = self::generatorIfParamServiceString($tableName, $column);
 
@@ -82,7 +144,7 @@ class WebmanSnake extends BaseGenerator
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
-        $content = File::getFileContent(false, 'Model.template', self::getClassName());
+        $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
 
         $search = ['{upTableName}', '{tableName}'];
         $replace = [$upTableName, $tableName];
@@ -103,6 +165,8 @@ class WebmanSnake extends BaseGenerator
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
+            //蛇形转驼峰
+            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
 
             $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
             $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
@@ -122,7 +186,8 @@ class WebmanSnake extends BaseGenerator
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
-
+            //蛇形转驼峰
+            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
             $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
         }
         return $return;
@@ -146,7 +211,7 @@ class WebmanSnake extends BaseGenerator
         $camelizeTableName = Hump::camelize($tableName);
         $upTableName = ucfirst(Hump::camelize($tableName));
 
-        $content = File::getFileContent(false, 'Router.template', self::getClassName());
+        $content = File::getFileContent(new self(), 'Router.template', self::getClassName());
 
         $search = ['{upTableName}', '{tableName}', '{$camelizeTableName}'];
         $replace = [$upTableName, $tableName, $camelizeTableName];
@@ -176,10 +241,13 @@ class WebmanSnake extends BaseGenerator
             }
 
 //            $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
-
+            //蛇形转驼峰
+            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
             $return = $return . 'if (!empty($where' . "['{$v['COLUMN_NAME']}']" . ')) {' . PHP_EOL .
                 '$' . $lcTableName . '=' . '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
         }
         return $return;
     }
+
+
 }

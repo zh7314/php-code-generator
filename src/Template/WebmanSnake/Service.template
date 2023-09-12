@@ -1,9 +1,9 @@
-namespace App\Services\Admin;
+namespace app\service\Admin;
 
-use App\Models\{upTableName};
+use app\model\{upTableName};
 use Exception;
-use App\Utils\GlobalCode;
-use App\Utils\GlobalMsg;
+use app\util\GlobalCode;
+use app\util\GlobalMsg;
 
 class {upTableName}Service
 {

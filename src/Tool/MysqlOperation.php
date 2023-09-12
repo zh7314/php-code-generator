@@ -1,8 +1,8 @@
 <?php
 
-namespace ZX;
+namespace ZX\Tool;
 
-use ZX\Mysql;
+use ZX\Tool\Mysql;
 
 class MysqlOperation
 {

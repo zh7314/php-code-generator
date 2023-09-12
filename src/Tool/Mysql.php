@@ -1,6 +1,6 @@
 <?php
 
-namespace ZX;
+namespace ZX\Tool;
 
 use PDO;
 use PDOException;

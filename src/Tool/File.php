@@ -1,6 +1,6 @@
 <?php
 
-namespace ZX;
+namespace ZX\Tool;
 
 use Exception;
 use ZX\BaseGenerator;
@@ -12,6 +12,7 @@ class File
     {
         try {
             $path = $filePath . DIRECTORY_SEPARATOR . $fileName;
+
             if ($append) {
                 $file = fopen($path, $model);
                 fwrite($file, $content);
@@ -56,9 +57,9 @@ class File
         }
     }
 
-    public static function generatorPath(string $path = './', BaseGenerator $Generator = null)
+    public static function generatorPath(BaseGenerator $Generator, string $path = './')
     {
-        $allControllerPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getHttpPath() . DIRECTORY_SEPARATOR . $Generator::getControllerPath();
+        $allControllerPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getControllerPath();
         $Generator::setAllControllerPath($allControllerPath);
 
         $allServicePath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getServicePath();
@@ -86,27 +87,18 @@ class File
      * @return false|string
      * @throws Exception
      */
-    public static function getFileContent(bool $custom = false, string $filePath = '', string $templateName = '')
+    public static function getFileContent(BaseGenerator $Generator, string $filePath = '', string $templateName = '')
     {
-
-        $content = null;
-
-        if ($custom) {
-            if (!file_exists($filePath)) {
-                throw new Exception('file is not exist');
-            }
-            $content = file_get_contents($filePath);
-        } else {
-            if (empty($templateName)) {
-                throw new Exception('template name is not null');
-            }
-            $templatePath = BaseGenerator::getBaseTemplatePath() . DIRECTORY_SEPARATOR . $templateName . DIRECTORY_SEPARATOR . $filePath;
-
-            if (!file_exists($templatePath)) {
-                throw new Exception('file is not exist');
-            }
-            $content = file_get_contents($templatePath);
+        if (empty($templateName)) {
+            throw new Exception('template name is not null');
         }
+        $templatePath = $Generator::getTemplatePath() . DIRECTORY_SEPARATOR . $templateName . DIRECTORY_SEPARATOR . $filePath;
+
+        if (!file_exists($templatePath)) {
+            throw new Exception('file is not exist');
+        }
+        $content = file_get_contents($templatePath);
+
         return $content;
     }
 
