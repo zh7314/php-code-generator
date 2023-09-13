@@ -25,7 +25,7 @@ composer require zx/php-code-generator
 ```
 
 ### 关于软删除版本
-1，不在单独提供laravel，webman等使用`Eloquent ORM`的框架，因只需要单独在`model`里面添加`use SoftDeletes`即可
+1，不在单独提供laravel，webman等使用`Eloquent ORM`的框架，因只需要单独在`model`里面添加`use SoftDeletes`即可    
 2，驼峰命令在orm里面的转换，`composer require kirkbushell/eloquence`
 ```
 添加 eloquence service provider 在你的 config/app.php 文件中
