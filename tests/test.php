@@ -36,40 +36,40 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量蛇形命名模版
  */
 
-//File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
-//LaravelSnake::generatorAllTable();
-//LaravelSnake::generatorAllRouter();
+File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
+LaravelSnake::generatorAllTable();
+LaravelSnake::generatorAllRouter();
 
 
 /*
  * 非软删除版本 变量驼峰命名模版
  */
 
-//File::deldir('./' . LaravelCamel::getAppPath() . DIRECTORY_SEPARATOR);
-//LaravelCamel::generatorAllTable();
-//LaravelCamel::generatorAllRouter();
+File::deldir('./' . LaravelCamel::getAppPath() . DIRECTORY_SEPARATOR);
+LaravelCamel::generatorAllTable();
+LaravelCamel::generatorAllRouter();
 
 /*
  * 软删除版本特殊代码，变量蛇形命名模版
  */
 
-//File::deldir('./' . LaravelSoftDelZx::getAppPath() . DIRECTORY_SEPARATOR);
-//LaravelSoftDelZx::generatorAllTable();
-//LaravelSoftDelZx::generatorAllRouter();
+File::deldir('./' . LaravelSoftDelZx::getAppPath() . DIRECTORY_SEPARATOR);
+LaravelSoftDelZx::generatorAllTable();
+LaravelSoftDelZx::generatorAllRouter();
 
 /*
  * 非软删除版本 变量驼峰命名模版
  */
 
-//File::deldir('./' . WebmanCamel::getAppPath() . DIRECTORY_SEPARATOR);
-//WebmanCamel::generatorAllTable();
-//WebmanCamel::generatorAllRouter();
+File::deldir('./' . WebmanCamel::getAppPath() . DIRECTORY_SEPARATOR);
+WebmanCamel::generatorAllTable();
+WebmanCamel::generatorAllRouter();
 
 /*
  * 非软删除版本 变量蛇形命名模版
  */
 
-//File::deldir('./' . WebmanSnake::getAppPath() . DIRECTORY_SEPARATOR);
-//WebmanSnake::generatorAllTable();
-//WebmanSnake::generatorAllRouter();
+File::deldir('./' . WebmanSnake::getAppPath() . DIRECTORY_SEPARATOR);
+WebmanSnake::generatorAllTable();
+WebmanSnake::generatorAllRouter();
 
