@@ -6,24 +6,19 @@ include_once './../src/Tool/Hump.php';
 include_once './../src/Tool/Mysql.php';
 include_once './../src/Tool/MysqlOperation.php';
 include_once './../src/BaseGenerator.php';
-//include_once './../src/Generator/LaravelCamel.php';
-//include_once './../src/Generator/LaravelSnake.php';
-//include_once './../src/Generator/LaravelSoftDelCamel.php';
-//include_once './../src/Generator/LaravelSoftDelSnake.php';
-//include_once './../src/Generator/LaravelSoftDelZx.php';
-//include_once './../src/Generator/WebmanCamel.php';
+include_once './../src/Generator/LaravelCamel.php';
+include_once './../src/Generator/LaravelSnake.php';
+include_once './../src/Generator/LaravelSoftDelZx.php';
+include_once './../src/Generator/WebmanCamel.php';
 include_once './../src/Generator/WebmanSnake.php';
 
-//use ZX\Generator\WebmanCamel;
+use ZX\Generator\WebmanCamel;
 use ZX\Generator\WebmanSnake;
 use ZX\Tool\File;
 use ZX\Tool\MysqlOperation;
-
-//use ZX\Generator\LaravelCamel;
-//use ZX\Generator\LaravelSnake;
-//use ZX\Generator\LaravelSoftDelCamel;
-//use ZX\Generator\LaravelSoftDelSnake;
-//use ZX\Generator\LaravelSoftDelZx;
+use ZX\Generator\LaravelCamel;
+use ZX\Generator\LaravelSnake;
+use ZX\Generator\LaravelSoftDelZx;
 
 $param = [
     'type' => 'mysql',
@@ -55,22 +50,6 @@ MysqlOperation::setConnection($param);
 //LaravelCamel::generatorAllRouter();
 
 /*
- * 软删除版本代码，变量蛇形命名模版
- */
-
-//File::deldir('./' . LaravelSoftDelSnake::getAppPath() . DIRECTORY_SEPARATOR);
-//LaravelSoftDelSnake::generatorAllTable();
-//LaravelSoftDelSnake::generatorAllRouter();
-
-/*
- * 软删除版本代码，变量驼峰命名模版
- */
-
-//File::deldir('./' . LaravelSoftDelCamel::getAppPath() . DIRECTORY_SEPARATOR);
-//LaravelSoftDelCamel::generatorAllTable();
-//LaravelSoftDelCamel::generatorAllRouter();
-
-/*
  * 软删除版本特殊代码，变量蛇形命名模版
  */
 
@@ -90,12 +69,7 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量蛇形命名模版
  */
 
-try {
-    File::deldir('./' . WebmanSnake::getAppPath() . DIRECTORY_SEPARATOR);
+//File::deldir('./' . WebmanSnake::getAppPath() . DIRECTORY_SEPARATOR);
+//WebmanSnake::generatorAllTable();
+//WebmanSnake::generatorAllRouter();
 
-    WebmanSnake::generatorAllTable();
-    WebmanSnake::generatorAllRouter();
-} catch (Throwable $e) {
-//    p($e->getTraceAsString());
-    p($e->getMessage());
-}

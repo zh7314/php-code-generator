@@ -220,7 +220,7 @@ class LaravelSnake extends BaseGenerator
         $replace = [$upTableName, $tableName, $camelizeTableName];
         $content = str_replace($search, $replace, $content);
 
-        $content = self::$fileHeaer . PHP_EOL . $content;
+//        $content = self::$fileHeaer . PHP_EOL . $content;
         //右键查看源代码
         if ($print) {
             print_r($content);
