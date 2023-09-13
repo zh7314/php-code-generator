@@ -53,12 +53,12 @@ abstract class BaseGenerator
     public abstract static function generatorModel(string $tableName, array $column);
 
     //生成Controller参数字符串代码
-    public abstract static function generatorParamString(array $column);
+    public abstract static function generatorParamString(array $column, bool $camel);
 
     //生成Service参数字符串代码
-    public abstract static function generatorParamServiceString(string $tableName, array $column);
+    public abstract static function generatorParamServiceString(string $tableName, array $column, bool $camel);
 
     //生成Service参数 if代码
-    public abstract static function generatorIfParamServiceString(string $tableName, array $column);
+    public abstract static function generatorIfParamServiceString(string $tableName, array $column, bool $camel);
 
 }

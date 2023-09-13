@@ -7,7 +7,7 @@ use ZX\Tool\File;
 use ZX\Tool\Hump;
 use ZX\Tool\MysqlOperation;
 
-class WebmanCamel extends BaseGenerator
+class LaravelCamel extends BaseGenerator
 {
     //文件后缀
     protected static $fileSuffix = '.php';
@@ -18,13 +18,13 @@ class WebmanCamel extends BaseGenerator
     //模型文件后缀
     protected static $modelSuffix = '';
     //控制器文件路径
-    protected static $controllerPath = 'controller' . DIRECTORY_SEPARATOR . 'Admin';
+    protected static $controllerPath = 'Controllers' . DIRECTORY_SEPARATOR . 'Admin';
     //服务文件路径
-    protected static $servicePath = 'service' . DIRECTORY_SEPARATOR . 'Admin';
+    protected static $servicePath = 'Services' . DIRECTORY_SEPARATOR . 'Admin';
     //模型文件路径
-    protected static $modelPath = 'model';
+    protected static $modelPath = 'Models';
     //应用根路径
-    protected static $appPath = 'app';
+    protected static $appPath = 'app' . DIRECTORY_SEPARATOR . 'Http';
     //控制器目录名称
     protected static $allControllerPath = '';
     //服务目录名称

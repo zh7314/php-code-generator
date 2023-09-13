@@ -10,8 +10,6 @@ php ^8.0
 目前仅支持laravel，后续会支持webman，thinkphp等，也欢迎提交模板
 - [x] PHP-laravel蛇形命名
 - [x] PHP-laravel驼峰命名
-- [x] PHP-laravel软删除蛇形命名
-- [x] PHP-laravel软删除驼峰命名
 - [x] PHP-webman蛇形命名
 - [x] PHP-webman驼峰命名
 - [ ] Golang-goravel蛇形命名

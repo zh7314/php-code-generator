@@ -9,6 +9,8 @@ use ZX\Tool\MysqlOperation;
 
 class WebmanSnake extends BaseGenerator
 {
+    //文件后缀
+    protected static $fileSuffix = '.php';
     //控制器文件后缀
     protected static $controllerSuffix = 'Controller';
     //服务文件后缀
@@ -29,8 +31,6 @@ class WebmanSnake extends BaseGenerator
     protected static $allServicePath = '';
     //模型目录名称
     protected static $allModelPath = '';
-    //模版文件路径
-    protected static $templatePath = __DIR__ . DIRECTORY_SEPARATOR . 'Template';
     //文件头部
     protected static $fileHeaer = '<?php ';
     //不需要处理的字段
@@ -117,7 +117,7 @@ class WebmanSnake extends BaseGenerator
 
         $contents = self::$fileHeaer . PHP_EOL . $content;
 
-        File::writeToFile($upTableName . 'Controller.php', self::$allControllerPath, $contents);
+        File::writeToFile($upTableName . self::$controllerSuffix . self::$fileSuffix, self::$allControllerPath, $contents);
     }
 
     public static function generatorService(string $tableName, array $column)
@@ -137,7 +137,7 @@ class WebmanSnake extends BaseGenerator
 
         $contents = self::$fileHeaer . PHP_EOL . $content;
 
-        File::writeToFile($upTableName . 'Service.php', self::$allServicePath, $contents);
+        File::writeToFile($upTableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
     }
 
     public static function generatorModel(string $tableName, array $column)
@@ -152,10 +152,10 @@ class WebmanSnake extends BaseGenerator
 
         $contents = self::$fileHeaer . PHP_EOL . $content;
 
-        File::writeToFile($upTableName . '.php', self::$allModelPath, $contents);
+        File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
     }
 
-    public static function generatorParamString(array $column)
+    public static function generatorParamString(array $column, bool $camel = false)
     {
 
         $return = '';
@@ -166,7 +166,7 @@ class WebmanSnake extends BaseGenerator
                 continue;
             }
             //蛇形转驼峰
-            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
 
             $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
             $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
@@ -174,7 +174,7 @@ class WebmanSnake extends BaseGenerator
         return $return;
     }
 
-    public static function generatorParamServiceString(string $tableName, array $column)
+    public static function generatorParamServiceString(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -187,7 +187,8 @@ class WebmanSnake extends BaseGenerator
                 continue;
             }
             //蛇形转驼峰
-            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+
             $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
         }
         return $return;
@@ -217,7 +218,7 @@ class WebmanSnake extends BaseGenerator
         $replace = [$upTableName, $tableName, $camelizeTableName];
         $content = str_replace($search, $replace, $content);
 
-//        $contents = self::$fileHeaer . PHP_EOL . $content;
+        $content = self::$fileHeaer . PHP_EOL . $content;
         //右键查看源代码
         if ($print) {
             print_r($content);
@@ -227,7 +228,7 @@ class WebmanSnake extends BaseGenerator
     }
 
 
-    public static function generatorIfParamServiceString(string $tableName, array $column)
+    public static function generatorIfParamServiceString(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -240,9 +241,9 @@ class WebmanSnake extends BaseGenerator
                 continue;
             }
 
-//            $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
             //蛇形转驼峰
-            $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+
             $return = $return . 'if (!empty($where' . "['{$v['COLUMN_NAME']}']" . ')) {' . PHP_EOL .
                 '$' . $lcTableName . '=' . '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
         }
