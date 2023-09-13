@@ -2,33 +2,33 @@
 
 [中文文档](./README.md)
 
-### 介绍
-基于php的代码生成器，根据数据库表快速生成CURD方法，是基于渲染模板的方法
+### introduce
+A php based code generator that quickly generates CURD methods from database tables is a method based on rendering templates
 
-### 运行环境
+### environment
 php `^7.2|^8.0`
 
-### 支持范围
-目前仅支持laravel，webman，后续会支持goravel，drogon等，也欢迎提交模板
-- [x] PHP-laravel 蛇形命名
-- [x] PHP-laravel 驼峰命名
-- [x] PHP-webman 蛇形命名
-- [x] PHP-webman 驼峰命名
-- [ ] Golang-goravel 蛇形命名
-- [ ] Golang-goravel 驼峰命名
-- [ ] CPP-drogon 蛇形命名
-- [ ] CPP-drogon 驼峰命名
+### support
+Currently only support laravel, webman, goravel, drogon and so on will be supported in the future, also welcome to submit templates
+- [x] PHP-laravel snake case
+- [x] PHP-laravel camel case
+- [x] PHP-webman snake case
+- [x] PHP-webman camel case
+- [ ] Golang-goravel snake case
+- [ ] Golang-goravel camel case
+- [ ] CPP-drogon snake case
+- [ ] CPP-drogon camel case
 
-### 支持 composer
+### composer
 ```
 composer require zx/php-code-generator
 ```
 
-### 关于软删除版本
-1，不在单独提供laravel，webman等使用`Eloquent ORM`的框架，因只需要单独在`model`里面添加`use SoftDeletes`即可
-2，驼峰命令在orm里面的转换，`composer require kirkbushell/eloquence`
+### About soft delete version
+1，laravel, webman, etc. use Eloquent ORM frameworks, because you only need to add `use SoftDeletes` to `model` separately    
+2，The hump commands the conversion inside the orm，`composer require kirkbushell/eloquence`
 ```
-添加 eloquence service provider 在你的 config/app.php 文件中
+Add the eloquence service provider to your config/app.php file
 
 'providers' => [
 
@@ -38,7 +38,7 @@ composer require zx/php-code-generator
         Eloquence\EloquenceServiceProvider::class,
     ],
 ```
-实例：
+example：
 ```
 <?php
 
@@ -50,43 +50,43 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Feedback extends Model
 {
-    // 蛇形命名转驼峰
+    // Serpentine named turn hump
     use CamelCasing;
 
-    // 软删除
+    // Soft delete
     use SoftDeletes;
 
-    // 表名
+    // table name
     protected $table = 'feedback';
-    // 主键id
+    // primary key id
     protected $primaryKey = 'id';
-    // 不可被批量赋值的字段
+    // A field that cannot be assigned in batches
     protected $guarded = [];
-    // 不维护时间字段
+    // No time field is maintained
     public $timestamps = false;
-    // 返回隐藏的字段
+    // Returns a hidden field
     protected $hidden = ['delete_at'];
     // 返回显示的字段
     protected $visible = [];
-    // 自定义软删除字段 默认 deleted_at
+    // The default soft delete field is deleted_at
     const DELETED_AT = 'delete_at';
 }
 
 ```
-`Eloquent ORM`软删除使用文档：https://www.cnblogs.com/zx-admin/p/17497555.html
-`Eloquent ORM`驼峰命名转换使用文档：https://www.cnblogs.com/zx-admin/p/17493699.html
+`Eloquent ORM`Soft delete usage document：https://www.cnblogs.com/zx-admin/p/17497555.html  
+`Eloquent ORM`Hump naming conversion documentation：https://www.cnblogs.com/zx-admin/p/17493699.html
 
 
-### 使用方法
-1, 下载该工具包代码，保障当前环境有php的运行环境
-2, 查看`tests/test.php`的代码有测试用例   
-3, 在 `tests/Tools`有针对laravel和webman的代码工具包   
-4, 如果不理解怎么使用可以参看 webman项目`https://github.com/zh7314/zx-webman-website` OR laravel项目`https://github.com/zh7314/zx-website`   
-5, 每次生成前建议删除`tests`的目录下，然后吧生成好的代码复制到对应的项目文件下，直接生成在项目目录
-容易造成代码覆盖，所以推荐自己复制进去
+### how to use
+1, Download the toolkit code to ensure that the current environment has a php running environment
+2, Look at the `tests/test.php` code for test cases 
+3, There are code kits for laravel and webman in `tests/Tools`
+4, If you do not understand how to use can see, webman project `https://github.com/zh7314/zx-webman-website` OR laravel project`https://github.com/zh7314/zx-website`   
+5, Before each generation, it is recommended to delete the directory of `tests`, and then copy the generated code to the corresponding project file. Directly generated 
+in the project directory is easy to cause code coverage, so it is recommended to copy it yourself
 
 
-#### 使用例子
+#### use example
 ```
 <?php
 
@@ -164,9 +164,11 @@ WebmanSnake::generatorAllTable();
 WebmanSnake::generatorAllRouter();
 ```
 
-7,如果你直接使用默认模板你可能需要一些辅助代码   
-他们会在`tests/Tools`的`laravel/utils`里面
-在`composer.json`里面加上
+6, If you use the default template directly you may need some helper code
+They will be in `laravel/utils` in `tests/Tools`
+Add in `composer.json`
+
+
 ```
 "autoload": {
         "files": [
@@ -174,17 +176,17 @@ WebmanSnake::generatorAllRouter();
         ]
     }
 ```
-8,如果你不喜欢使用一些辅助代码，你可以把返回的代码改成
+7, If you don't like to use some auxiliary code, you can change the return code to
 ```
 return response()->json(['code' => 200, 'msg' => '成功']);
 ```
-这样标准laravel写法 ,代码检查也可以改成
+So standard laravel writing, code check can also be changed
 ```
 $where['weixin_phone'] = !empty($request->weixin_phone) ? (string)htmlspecialchars(trim($request->weixin_phone), ENT_QUOTES, "UTF-8") : '';
 ```
-#### 自定义模板
-1,继承 `ZX\BaseGenerator`  
-2,实现抽象方法，参照`XXGenerator` 的方法去实现自己的模板，通用的方法都有提供
+#### Custom template
+1, extend `ZX\BaseGenerator`  
+2, Implementation of abstract methods, referring to the `XXGenerator` method to achieve their own templates, general methods are provided
 
 #### 问题反馈
 QQ群：247823727  
