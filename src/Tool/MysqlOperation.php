@@ -101,4 +101,70 @@ class MysqlOperation
         return $defaultValue[$type];
     }
 
+    public static function transforColumnMysqlToGolang(array $column)
+    {
+        $php = [];
+
+        foreach ($column as $k => $v) {
+            //列名
+            $php[$k]['COLUMN_NAME'] = $v['COLUMN_NAME'];
+            //列数据类型
+            $php[$k]['DATA_TYPE'] = self::transforColumnRuleToGolang($v['DATA_TYPE']);
+            //库名
+            $php[$k]['TABLE_SCHEMA'] = $v['TABLE_SCHEMA'];
+            //表名
+            $php[$k]['TABLE_NAME'] = $v['TABLE_NAME'];
+            //注释
+            $php[$k]['COLUMN_COMMENT'] = $v['COLUMN_COMMENT'];
+        }
+
+        return $php;
+    }
+
+    //转换规则
+    public static function transforColumnRuleToGolang(string $type)
+    {
+        if ($type == 'varchar') {
+            return 'string';
+        } elseif ($type == 'char') {
+            return 'string';
+        } elseif ($type == 'text') {
+            return 'string';
+        } elseif ($type == 'int') {
+            return 'int';
+        } elseif ($type == 'tinyint') {
+            return 'int';
+        } elseif ($type == 'bigint') {
+            return 'float';
+        } elseif ($type == 'date') {
+            return 'string';
+        } elseif ($type == 'datetime') {
+            return 'string';
+        } elseif ($type == 'time') {
+            return 'string';
+        } elseif ($type == 'decimal') {
+            return 'float';
+        } elseif ($type == 'json') {
+            return 'string';
+        } elseif ($type == 'longtext') {
+            return 'string';
+        } elseif ($type == 'boolean') {
+            return 'bool';
+        } else {
+            return 'string';
+        }
+    }
+
+    //转换规则
+    public static function getdefaultValueToGolang(string $type)
+    {
+        $defaultValue = [];
+        $defaultValue['string'] = "''";
+        $defaultValue['float'] = 0;
+        $defaultValue['int'] = 0;
+        $defaultValue['array'] = "[]";
+        $defaultValue['bool'] = 'true';
+
+        return $defaultValue[$type];
+    }
 }
