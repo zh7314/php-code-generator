@@ -122,39 +122,39 @@ class MysqlOperation
     }
 
     //转换规则
-//    public static function transforColumnRuleToGolang(string $type)
-//    {
-//        if ($type == 'varchar') {
-//            return 'string';
-//        } elseif ($type == 'char') {
-//            return 'string';
-//        } elseif ($type == 'text') {
-//            return 'string';
-//        } elseif ($type == 'int') {
-//            return 'int';
-//        } elseif ($type == 'tinyint') {
-//            return 'int';
-//        } elseif ($type == 'bigint') {
-//            return 'float';
-//        } elseif ($type == 'date') {
-//            return 'string';
-//        } elseif ($type == 'datetime') {
-//            return 'string';
-//        } elseif ($type == 'time') {
-//            return 'string';
-//        } elseif ($type == 'decimal') {
-//            return 'float';
-//        } elseif ($type == 'json') {
-//            return 'string';
-//        } elseif ($type == 'longtext') {
-//            return 'string';
-//        } elseif ($type == 'boolean') {
-//            return 'bool';
-//        } else {
-//            return 'string';
-//        }
-//    }
-//
+    public static function transforColumnRuleToGolang(string $type)
+    {
+        if ($type == 'varchar') {
+            return 'string';
+        } elseif ($type == 'char') {
+            return 'string';
+        } elseif ($type == 'text') {
+            return 'string';
+        } elseif ($type == 'int') {
+            return 'int';
+        } elseif ($type == 'tinyint') {
+            return 'int';
+        } elseif ($type == 'bigint') {
+            return 'int64';
+        } elseif ($type == 'date') {
+            return 'string';
+        } elseif ($type == 'datetime') {
+            return 'local.LocalTime';
+        } elseif ($type == 'time') {
+            return 'local.LocalTime';
+        } elseif ($type == 'decimal') {
+            return 'float64';
+        } elseif ($type == 'json') {
+            return 'string';
+        } elseif ($type == 'longtext') {
+            return 'string';
+        } elseif ($type == 'boolean') {
+            return 'bool';
+        } else {
+            return 'string';
+        }
+    }
+
 //    //转换规则
 //    public static function getdefaultValueToGolang(string $type)
 //    {

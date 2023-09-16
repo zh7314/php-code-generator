@@ -80,5 +80,8 @@ MysqlOperation::setConnection($param);
  */
 
 File::deldir('./' . GoravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
-GoravelSnake::generatorAllTable();
-GoravelSnake::generatorAllRouter();
+//GoravelSnake::generatorAllTable();
+
+GoravelSnake::generatorTable("admin_group");
+
+//GoravelSnake::generatorAllRouter();

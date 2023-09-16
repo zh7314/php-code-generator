@@ -18,19 +18,23 @@ class GoravelSnake extends BaseGenerator
     //模型文件后缀
     protected static $modelSuffix = '';
     //控制器文件路径
-    protected static $controllerPath = 'controller' . DIRECTORY_SEPARATOR . 'admin';
+    protected static $controllerPath = 'http' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'admin';
     //服务文件路径
-    protected static $servicePath = 'service' . DIRECTORY_SEPARATOR . 'admin';
+    protected static $servicePath = 'services' . DIRECTORY_SEPARATOR . 'admin';
     //模型文件路径
-    protected static $modelPath = 'model';
+    protected static $modelPath = 'models';
+    //请求文件路径
+    protected static $requestPath = 'requests';
     //应用根路径
-    protected static $appPath = 'app' . DIRECTORY_SEPARATOR . 'http';
+    protected static $appPath = 'app';
     //控制器目录名称
     protected static $allControllerPath = '';
     //服务目录名称
     protected static $allServicePath = '';
     //模型目录名称
     protected static $allModelPath = '';
+    //模型目录名称
+    protected static $allRequestPath = '';
     //文件头部
     protected static $fileHeaer = '';
     //不需要处理的字段
@@ -57,6 +61,11 @@ class GoravelSnake extends BaseGenerator
         return self::$modelPath;
     }
 
+    public static function getRequestPath()
+    {
+        return self::$requestPath;
+    }
+
     public static function getClassName()
     {
         return basename(__CLASS__);
@@ -77,6 +86,11 @@ class GoravelSnake extends BaseGenerator
         self::$allModelPath = $allModelPath;
     }
 
+    public static function setAllRequestPath(string $allRequestPath)
+    {
+        self::$allRequestPath = $allRequestPath;
+    }
+
     public static function generatorAllTable()
     {
         $table = MysqlOperation::getAllTableName();
@@ -91,28 +105,29 @@ class GoravelSnake extends BaseGenerator
     public static function generatorTable(string $tableName)
     {
         //获取表的字段
-        $column = MysqlOperation::getTableColumn($tableName);
+        $column = MysqlOperation::getTableColumn($tableName, true);
         //生成目录
         File::generatorPath(new self());
+
         //生产控制器
         self::generatorController($tableName, $column);
         //生产服务
         self::generatorService($tableName, $column);
         //生产模型
         self::generatorModel($tableName, $column);
+        //生产请求
+        self::generatorRequest($tableName, $column);
     }
 
     public static function generatorController(string $tableName, array $column)
     {
         //表名
         $upTableName = ucfirst(Hump::camelize($tableName));
-        //列数据
-        $paramString = self::generatorParamString($column);
 
         $content = File::getFileContent(new self(), 'Controller.template', self::getClassName());
 
-        $search = ['{upTableName}', '{paramString}'];
-        $replace = [$upTableName, $paramString];
+        $search = ['{upTableName}'];
+        $replace = [$upTableName];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . PHP_EOL . $content;
@@ -250,5 +265,18 @@ class GoravelSnake extends BaseGenerator
         return $return;
     }
 
+    public static function generatorRequest(string $tableName, array $column)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
 
+        $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
+
+        $search = ['{upTableName}', '{tableName}'];
+        $replace = [$upTableName, $tableName];
+        $content = str_replace($search, $replace, $content);
+
+        $contents = self::$fileHeaer . PHP_EOL . $content;
+
+        File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
+    }
 }

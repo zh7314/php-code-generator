@@ -68,9 +68,13 @@ class File
         $allModelPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getModelPath();
         $Generator::setAllModelPath($allModelPath);
 
+        $allRequestPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getRequestPath();
+        $Generator::setAllModelPath($allRequestPath);
+
         self::makeFile($allControllerPath);
         self::makeFile($allServicePath);
         self::makeFile($allModelPath);
+        self::makeFile($allRequestPath);
     }
 
     public static function makeFile(string $path)

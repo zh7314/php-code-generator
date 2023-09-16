@@ -1,0 +1,95 @@
+package admin
+
+import (
+	"github.com/goravel/framework/contracts/http"
+	requests "goravel/app/requests/admin"
+	"goravel/app/services/admin"
+	"goravel/app/utils/response"
+)
+
+type {upTableName}Controller struct {
+}
+
+func New{upTableName}Controller() *{upTableName}Controller {
+	return &{upTableName}Controller{}
+}
+
+func (r *{upTableName}Controller) GetList(ctx http.Context) http.Response {
+
+	var request requests.{upTableName}Request
+	err := ctx.Request().Bind(&request)
+	if err != nil {
+		return response.Fail(ctx, "", err.Error())
+	}
+
+	data, ok := admin.New{upTableName}Service().GetList(request)
+	if ok != nil {
+		return response.Fail(ctx, "", ok.Error())
+	} else {
+		return response.Success(ctx, data, "获取成功")
+	}
+}
+
+func (r *{upTableName}Controller) GetAll(ctx http.Context) http.Response {
+
+	var request requests.{upTableName}Request
+	err := ctx.Request().Bind(&request)
+	if err != nil {
+		return response.Fail(ctx, "", err.Error())
+	}
+
+	data, ok := admin.New{upTableName}Service().GetAll(request)
+	if ok != nil {
+		return response.Fail(ctx, "", ok.Error())
+	} else {
+		return response.Success(ctx, data, "失败")
+	}
+}
+
+func (r *{upTableName}Controller) Add(ctx http.Context) http.Response {
+
+	var request requests.{upTableName}Request
+	err := ctx.Request().Bind(&request)
+	if err != nil {
+		return response.Fail(ctx, "", err.Error())
+	}
+
+	data, ok := admin.New{upTableName}Service().Add(request)
+	if ok != nil {
+		return response.Fail(ctx, "", ok.Error())
+	} else {
+		return response.Success(ctx, data, "失败")
+	}
+}
+
+func (r *{upTableName}Controller) Save(ctx http.Context) http.Response {
+
+	var request requests.{upTableName}Request
+	err := ctx.Request().Bind(&request)
+	if err != nil {
+		return response.Fail(ctx, "", err.Error())
+	}
+
+	data, ok := admin.New{upTableName}Service().Save(request)
+	if ok != nil {
+		return response.Fail(ctx, "", ok.Error())
+	} else {
+		return response.Success(ctx, data, "失败")
+	}
+}
+
+func (r *{upTableName}Controller) Delete(ctx http.Context) http.Response {
+
+	var request requests.{upTableName}Request
+	err := ctx.Request().Bind(&request)
+	if err != nil {
+		return response.Fail(ctx, "", err.Error())
+	}
+
+	data, ok := admin.New{upTableName}Service().Delete(request.ID)
+	if ok != nil {
+		return response.Fail(ctx, "", ok.Error())
+	} else {
+		return response.Success(ctx, data, "失败")
+	}
+}
