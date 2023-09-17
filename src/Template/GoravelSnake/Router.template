@@ -1,7 +1,0 @@
-router.Prefix("admin").Group(func(router1 route.Router) {
-			router1.Post("/getList", admin.NewAdminController().GetList)
-			router1.Post("/getAll", admin.NewAdminController().GetAll)
-			router1.Post("/add", admin.NewAdminController().Add)
-			router1.Post("/save", admin.NewAdminController().Save)
-			router1.Post("/delete", admin.NewAdminController().Delete)
-		})

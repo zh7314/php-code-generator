@@ -1,0 +1,9 @@
+package admin
+
+import "goravel/app/utils/local"
+
+type AdminRequest struct {
+
+	Page          int             `form:"page" json:"page"`                       // 页码
+	PageSize      int             `form:"pageSize" json:"pageSize"`               // 页大小
+}

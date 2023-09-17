@@ -1,0 +1,107 @@
+
+namespace app\controller\Admin;
+
+use app\service\Admin\{upTableName}Service;
+use support\Request;
+use Throwable;
+use app\util\ResponseTrait;
+use support\Db;
+
+class {upTableName}Controller{
+
+    use ResponseTrait;
+
+    public function getList(Request $request) {
+        try {
+            $where = [];
+            $page = parameterCheck($request->input('page'),'int',0);
+            $pageSize = parameterCheck($request->input('pageSize'),'int',0);
+
+            {paramString}
+            $data = {upTableName}Service::getList($where,$page,$pageSize);
+
+            return $this->success($data);
+        } catch (Throwable $e) {
+            return $this->fail($e);
+        }
+    }
+
+    public function getAll(Request $request) {
+        try {
+            $where = [];
+
+            {paramString}
+
+            $data = {upTableName}Service::getAll($where);
+
+            return $this->success($data);
+        } catch (Throwable $e) {
+            return $this->fail($e);
+        }
+    }
+
+    public function getOne(Request $request)
+    {
+        try {
+            $where = [];
+
+            $where['id'] = parameterCheck($request->input('id'), 'int', 0);
+
+            $data = {upTableName}Service::getOne($where['id']);
+
+            return $this->success($data);
+        } catch (Throwable $e) {
+            return $this->fail($e);
+        }
+    }
+
+    public function add(Request $request) {
+
+        Db::beginTransaction();
+        try {
+            $where = [];
+            {paramString}
+            $data = {upTableName}Service::add($where);
+
+            Db::commit();
+            return $this->success($data);
+        } catch (Throwable $e) {
+            Db::rollBack();
+            return $this->fail($e);
+        }
+    }
+
+    public function save(Request $request) {
+
+        Db::beginTransaction();
+        try {
+            $where = [];
+            $where['id'] = parameterCheck($request->input('id'), 'int', 0);
+            {paramString}
+            $data = {upTableName}Service::save($where);
+
+            Db::commit();
+            return $this->success($data);
+        } catch (Throwable $e) {
+            Db::rollBack();
+            return $this->fail($e);
+        }
+    }
+
+    public function delete(Request $request) {
+
+        Db::beginTransaction();
+        try {
+            $where = [];
+            $where['id'] = parameterCheck($request->input('id'), 'int', 0);
+            $data = {upTableName}Service::delete($where['id']);
+
+            Db::commit();
+            return $this->success($data);
+        } catch (Throwable $e) {
+            Db::rollBack();
+            return $this->fail($e);
+        }
+    }
+
+}

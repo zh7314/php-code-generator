@@ -1,0 +1,84 @@
+package admin
+
+import (
+	"github.com/goravel/framework/facades"
+	"goravel/app/models"
+	requests "goravel/app/requests/admin"
+	"goravel/app/utils/gconv"
+)
+
+type {upTableName}Service struct {
+}
+
+func New{upTableName}Service() *{upTableName}Service {
+	return &{upTableName}Service{}
+}
+
+func (r *{upTableName}Service) GetList(request requests.{upTableName}Request) (map[string]interface{}, error) {
+
+	var list []models.{upTableName}
+	var count int64
+
+	orm := facades.Orm().Query()
+
+	{ifParamString}
+
+	orm.Order("id desc").Paginate(request.Page, request.PageSize, &list, &count)
+
+	res := make(map[string]interface{})
+	res["list"] = list
+	res["count"] = count
+
+	return res, nil
+}
+
+func (r *{upTableName}Service) GetAll(request requests.{upTableName}Request) ([]models.{upTableName}, error) {
+
+	var list []models.{upTableName}
+
+	orm := facades.Orm().Query()
+
+    {ifParamString}
+
+	orm.Order("id desc").Get(&list)
+
+	return list, nil
+}
+
+func (r *{upTableName}Service) Add(request requests.{upTableName}Request) (bool, error) {
+
+	var admin models.{upTableName}
+
+	{paramString}
+
+	err := facades.Orm().Query().Create(&admin)
+	if err == nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (r *{upTableName}Service) Save(request requests.{upTableName}Request) (bool, error) {
+
+	var admin models.{upTableName}
+
+	admin.ID = request.ID
+	{paramString}
+
+	err := facades.Orm().Query().Save(&admin)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (r *{upTableName}Service) Delete(id int64) (bool, error) {
+
+	var admin models.{upTableName}
+	_, err := facades.Orm().Query().Delete(&admin)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

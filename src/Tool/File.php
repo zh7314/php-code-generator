@@ -57,26 +57,6 @@ class File
         }
     }
 
-    public static function generatorPath(BaseGenerator $Generator, string $path = './')
-    {
-        $allControllerPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getControllerPath();
-        $Generator::setAllControllerPath($allControllerPath);
-
-        $allServicePath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getServicePath();
-        $Generator::setAllServicePath($allServicePath);
-
-        $allModelPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getModelPath();
-        $Generator::setAllModelPath($allModelPath);
-
-        $allRequestPath = $path . $Generator::getAppPath() . DIRECTORY_SEPARATOR . $Generator::getRequestPath();
-        $Generator::setAllModelPath($allRequestPath);
-
-        self::makeFile($allControllerPath);
-        self::makeFile($allServicePath);
-        self::makeFile($allModelPath);
-        self::makeFile($allRequestPath);
-    }
-
     public static function makeFile(string $path)
     {
         if (!is_dir($path)) {
@@ -94,7 +74,7 @@ class File
     public static function getFileContent(BaseGenerator $Generator, string $filePath = '', string $templateName = '')
     {
         if (empty($templateName)) {
-            throw new Exception('template name is not null');
+            throw new Exception('template name is null');
         }
         $templatePath = $Generator::getTemplatePath() . DIRECTORY_SEPARATOR . $templateName . DIRECTORY_SEPARATOR . $filePath;
 

@@ -11,7 +11,7 @@ include_once './../src/Generator/LaravelSnake.php';
 include_once './../src/Generator/LaravelSoftDelZx.php';
 include_once './../src/Generator/WebmanCamel.php';
 include_once './../src/Generator/WebmanSnake.php';
-include_once './../src/Generator/GoravelSnake.php';
+include_once './../src/Generator/Goravel.php';
 
 use ZX\Tool\File;
 use ZX\Tool\MysqlOperation;
@@ -20,7 +20,7 @@ use ZX\Generator\LaravelSnake;
 use ZX\Generator\LaravelSoftDelZx;
 use ZX\Generator\WebmanCamel;
 use ZX\Generator\WebmanSnake;
-use ZX\Generator\GoravelSnake;
+use ZX\Generator\Goravel;
 
 $param = [
     'type' => 'mysql',
@@ -38,16 +38,14 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量蛇形命名模版
  */
 
-//File::deldir('./' . LaravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
-//LaravelSnake::generatorAllTable();
-//LaravelSnake::generatorAllRouter();
+LaravelSnake::generatorAllTable();
+LaravelSnake::generatorAllRouter();
 
 
 /*
  * 非软删除版本 变量驼峰命名模版
  */
 
-//File::deldir('./' . LaravelCamel::getAppPath() . DIRECTORY_SEPARATOR);
 //LaravelCamel::generatorAllTable();
 //LaravelCamel::generatorAllRouter();
 
@@ -55,7 +53,6 @@ MysqlOperation::setConnection($param);
  * 软删除版本特殊代码，变量蛇形命名模版
  */
 
-//File::deldir('./' . LaravelSoftDelZx::getAppPath() . DIRECTORY_SEPARATOR);
 //LaravelSoftDelZx::generatorAllTable();
 //LaravelSoftDelZx::generatorAllRouter();
 
@@ -63,7 +60,6 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量驼峰命名模版
  */
 
-//File::deldir('./' . WebmanCamel::getAppPath() . DIRECTORY_SEPARATOR);
 //WebmanCamel::generatorAllTable();
 //WebmanCamel::generatorAllRouter();
 
@@ -71,7 +67,6 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量蛇形命名模版
  */
 
-//File::deldir('./' . WebmanSnake::getAppPath() . DIRECTORY_SEPARATOR);
 //WebmanSnake::generatorAllTable();
 //WebmanSnake::generatorAllRouter();
 
@@ -79,9 +74,8 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 go 变量蛇形命名模版
  */
 
-File::deldir('./' . GoravelSnake::getAppPath() . DIRECTORY_SEPARATOR);
 //GoravelSnake::generatorAllTable();
 
-GoravelSnake::generatorTable("admin_group");
+Goravel::generatorTable("admin_group");
 
-//GoravelSnake::generatorAllRouter();
+//GoravelSnake::generatorRouter("admin_group");

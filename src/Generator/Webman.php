@@ -7,24 +7,22 @@ use ZX\Tool\File;
 use ZX\Tool\Hump;
 use ZX\Tool\MysqlOperation;
 
-class GoravelSnake extends BaseGenerator
+class Webman extends BaseGenerator
 {
     //文件后缀
-    protected static $fileSuffix = '.go';
+    protected static $fileSuffix = '.php';
     //控制器文件后缀
-    protected static $controllerSuffix = '_controller';
+    protected static $controllerSuffix = 'Controller';
     //服务文件后缀
-    protected static $serviceSuffix = '_service';
+    protected static $serviceSuffix = 'Service';
     //模型文件后缀
     protected static $modelSuffix = '';
     //控制器文件路径
-    protected static $controllerPath = 'http' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'admin';
+    protected static $controllerPath = 'controller' . DIRECTORY_SEPARATOR . 'Admin';
     //服务文件路径
-    protected static $servicePath = 'services' . DIRECTORY_SEPARATOR . 'admin';
+    protected static $servicePath = 'service' . DIRECTORY_SEPARATOR . 'Admin';
     //模型文件路径
-    protected static $modelPath = 'models';
-    //请求文件路径
-    protected static $requestPath = 'requests';
+    protected static $modelPath = 'model';
     //应用根路径
     protected static $appPath = 'app';
     //控制器目录名称
@@ -33,10 +31,8 @@ class GoravelSnake extends BaseGenerator
     protected static $allServicePath = '';
     //模型目录名称
     protected static $allModelPath = '';
-    //模型目录名称
-    protected static $allRequestPath = '';
     //文件头部
-    protected static $fileHeaer = '';
+    protected static $fileHeaer = '<?php ';
     //不需要处理的字段
     protected static $notDeal = ['id', 'create_at', 'update_at', 'is_delete', 'delete_at', 'create_time', 'update_time'];
 
@@ -61,11 +57,6 @@ class GoravelSnake extends BaseGenerator
         return self::$modelPath;
     }
 
-    public static function getRequestPath()
-    {
-        return self::$requestPath;
-    }
-
     public static function getClassName()
     {
         return basename(__CLASS__);
@@ -86,11 +77,6 @@ class GoravelSnake extends BaseGenerator
         self::$allModelPath = $allModelPath;
     }
 
-    public static function setAllRequestPath(string $allRequestPath)
-    {
-        self::$allRequestPath = $allRequestPath;
-    }
-
     public static function generatorAllTable()
     {
         $table = MysqlOperation::getAllTableName();
@@ -105,29 +91,28 @@ class GoravelSnake extends BaseGenerator
     public static function generatorTable(string $tableName)
     {
         //获取表的字段
-        $column = MysqlOperation::getTableColumn($tableName, true);
+        $column = MysqlOperation::getTableColumn($tableName);
         //生成目录
         File::generatorPath(new self());
-
         //生产控制器
         self::generatorController($tableName, $column);
         //生产服务
         self::generatorService($tableName, $column);
         //生产模型
         self::generatorModel($tableName, $column);
-        //生产请求
-        self::generatorRequest($tableName, $column);
     }
 
     public static function generatorController(string $tableName, array $column)
     {
         //表名
         $upTableName = ucfirst(Hump::camelize($tableName));
+        //列数据
+        $paramString = self::generatorParamString($column);
 
         $content = File::getFileContent(new self(), 'Controller.template', self::getClassName());
 
-        $search = ['{upTableName}'];
-        $replace = [$upTableName];
+        $search = ['{upTableName}', '{paramString}'];
+        $replace = [$upTableName, $paramString];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . PHP_EOL . $content;
@@ -174,7 +159,7 @@ class GoravelSnake extends BaseGenerator
     {
 
         $return = '';
-        $array = MysqlOperation::transforColumnMysqlToGolang($column);
+        $array = MysqlOperation::transforColumnMysqlToPHP($column);
 
         foreach ($array as $k => $v) {
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
@@ -183,7 +168,7 @@ class GoravelSnake extends BaseGenerator
             //蛇形转驼峰
             $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
 
-            $default = MysqlOperation::getdefaultValueToGolang($v['DATA_TYPE']);
+            $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
             $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
         }
         return $return;
@@ -196,7 +181,7 @@ class GoravelSnake extends BaseGenerator
         $lcTableName = lcfirst($upTableName);
 
         $return = '';
-        $array = MysqlOperation::transforColumnMysqlToGolang($column);
+        $array = MysqlOperation::transforColumnMysqlToPHP($column);
         foreach ($array as $k => $v) {
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
@@ -250,7 +235,7 @@ class GoravelSnake extends BaseGenerator
         $lcTableName = lcfirst($upTableName);
 
         $return = '';
-        $array = MysqlOperation::transforColumnMysqlToGolang($column);
+        $array = MysqlOperation::transforColumnMysqlToPHP($column);
         foreach ($array as $k => $v) {
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
@@ -265,18 +250,5 @@ class GoravelSnake extends BaseGenerator
         return $return;
     }
 
-    public static function generatorRequest(string $tableName, array $column)
-    {
-        $upTableName = ucfirst(Hump::camelize($tableName));
 
-        $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
-
-        $search = ['{upTableName}', '{tableName}'];
-        $replace = [$upTableName, $tableName];
-        $content = str_replace($search, $replace, $content);
-
-        $contents = self::$fileHeaer . PHP_EOL . $content;
-
-        File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
-    }
 }
