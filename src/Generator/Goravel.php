@@ -61,18 +61,18 @@ class Goravel extends Generator
         File::makeFile(self::$allRequestPath);
     }
 
-    public static function genAllTable(bool $case = false)
+    public static function genAllTable(bool $camel = false)
     {
         $table = MysqlOperation::getAllTableName();
 
         if (!empty($table)) {
-            foreach ($table as $k => $v) {
-                self::genTable($v['TABLE_NAME']);
+            foreach ($table as $v) {
+                self::genTable($v['TABLE_NAME'], $camel);
             }
         }
     }
 
-    public static function genTable(string $tableName, bool $case = false)
+    public static function genTable(string $tableName, bool $camel = false)
     {
         //获取表的字段
         $column = MysqlOperation::getTableColumn($tableName, true);
@@ -80,16 +80,16 @@ class Goravel extends Generator
         self::genPath();
 
         //生产控制器
-        self::genController($tableName, $column);
+        self::genController($tableName, $column, $camel);
         //生产服务
-        self::genService($tableName, $column);
+        self::genService($tableName, $column, $camel);
         //生产模型
-        self::genModel($tableName, $column);
+        self::genModel($tableName, $column, $camel);
         //生产请求
-        self::genRequest($tableName, $column);
+        self::genRequest($tableName, $column, $camel);
     }
 
-    public static function genController(string $tableName, array $column)
+    public static function genController(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -104,7 +104,7 @@ class Goravel extends Generator
         File::writeToFile($upTableName . self::$controllerSuffix . self::$fileSuffix, self::$allControllerPath, $contents);
     }
 
-    public static function genService(string $tableName, array $column)
+    public static function genService(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
         $lcTableName = lcfirst($upTableName);
@@ -123,65 +123,6 @@ class Goravel extends Generator
         File::writeToFile($upTableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
     }
 
-    public static function genModel(string $tableName, array $column)
-    {
-        $upTableName = ucfirst(Hump::camelize($tableName));
-
-        $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
-
-        $search = ['{upTableName}', '{tableName}'];
-        $replace = [$upTableName, $tableName];
-        $content = str_replace($search, $replace, $content);
-
-        $contents = self::$fileHeaer . PHP_EOL . $content;
-
-        File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
-    }
-
-    public static function genParamString(array $column, bool $camel = false)
-    {
-
-        $return = '';
-        $array = MysqlOperation::transforColumnMysqlToGolang($column);
-
-        foreach ($array as $k => $v) {
-            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
-                continue;
-            }
-            //蛇形转驼峰
-            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
-
-            $default = MysqlOperation::getdefaultValueToGolang($v['DATA_TYPE']);
-            $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
-        }
-        return $return;
-    }
-
-    public static function genParamServiceString(string $tableName, array $column, bool $camel = false)
-    {
-        $upTableName = ucfirst(Hump::camelize($tableName));
-
-        $lcTableName = lcfirst($upTableName);
-
-        $return = '';
-        $array = MysqlOperation::transforColumnMysqlToGolang($column);
-        foreach ($array as $k => $v) {
-            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
-                continue;
-            }
-
-            $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
-
-            $str = <<<EOF
-admin.{$upColumnName} = request.{$upColumnName}
-EOF;
-            $return = $return . $str . PHP_EOL;
-        }
-        return $return;
-
-    }
-
-
     public static function genServiceIfParam(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
@@ -190,7 +131,7 @@ EOF;
 
         $return = '';
         $array = MysqlOperation::transforColumnMysqlToGolang($column);
-        foreach ($array as $k => $v) {
+        foreach ($array as $v) {
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
@@ -207,18 +148,81 @@ EOF;
         return $return;
     }
 
-    public static function genAllRouter(bool $print = false)
+    public static function genServiceParam(string $tableName, array $column, bool $camel = false)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
+
+        $lcTableName = lcfirst($upTableName);
+
+        $return = '';
+        $array = MysqlOperation::transforColumnMysqlToGolang($column);
+        foreach ($array as $v) {
+            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
+                continue;
+            }
+
+            $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
+
+            $str = <<<EOF
+admin.{$upColumnName} = request.{$upColumnName}
+EOF;
+            $return = $return . $str . PHP_EOL;
+        }
+        return $return;
+    }
+
+    public static function genModel(string $tableName, array $column, bool $camel = false)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
+
+        $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
+        
+        $paramString = self::genModelParam($tableName, $column, $camel);
+
+        $search = ['{upTableName}', '{paramString}'];
+        $replace = [$upTableName, $paramString];
+        $content = str_replace($search, $replace, $content);
+
+        $contents = self::$fileHeaer . PHP_EOL . $content;
+
+        File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
+    }
+
+    public static function genModelParam(string $tableName, array $column, bool $camel = false)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
+
+        $lcTableName = lcfirst($upTableName);
+
+        $return = '';
+        $array = MysqlOperation::transforColumnMysqlToGolang($column);
+        foreach ($array as $v) {
+            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
+                continue;
+            }
+
+            $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
+
+            $str = <<<EOF
+admin.{$upColumnName} = request.{$upColumnName}
+EOF;
+            $return = $return . $str . PHP_EOL;
+        }
+        return $return;
+    }
+
+    public static function genAllRouter()
     {
         $table = MysqlOperation::getAllTableName();
 
         if (!empty($table)) {
-            foreach ($table as $k => $v) {
-                self::genRouter($v['TABLE_NAME'], $print);
+            foreach ($table as $v) {
+                self::genRouter($v['TABLE_NAME']);
             }
         }
     }
 
-    public static function genRouter(string $tableName, bool $print = false)
+    public static function genRouter(string $tableName)
     {
 
         $camelizeTableName = Hump::camelize($tableName);
@@ -232,14 +236,11 @@ EOF;
 
 //        $content = self::$fileHeaer . PHP_EOL . $content;
         //右键查看源代码
-        if ($print) {
-            print_r($content);
-        } else {
-            File::writeToFile('router' . self::$fileSuffix, self::$allModelPath, $content . PHP_EOL, 'a+', true);
-        }
+
+        File::writeToFile('router' . self::$fileSuffix, self::$allModelPath, $content . PHP_EOL, 'a+', true);
     }
 
-    public static function genRequest(string $tableName, array $column)
+    public static function genRequest(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 

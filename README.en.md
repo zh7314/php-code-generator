@@ -1,4 +1,4 @@
-# php-code-generator
+# code-generator
 
 [中文文档](./README.md)
 

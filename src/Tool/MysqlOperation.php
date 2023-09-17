@@ -156,15 +156,15 @@ class MysqlOperation
     }
 
 //    //转换规则
-//    public static function getdefaultValueToGolang(string $type)
-//    {
-//        $defaultValue = [];
-//        $defaultValue['string'] = "\"\"";
-//        $defaultValue['float'] = 0.00;
-//        $defaultValue['int'] = 0;
-//        $defaultValue['array'] = "[]";
-//        $defaultValue['bool'] = 'true';
-//
-//        return $defaultValue[$type];
-//    }
+    public static function getdefaultValueToGolang(string $type)
+    {
+        $defaultValue = [];
+        $defaultValue['string'] = "\"\"";
+        $defaultValue['float'] = 0.00;
+        $defaultValue['int'] = 0;
+        $defaultValue['array'] = "[]";
+        $defaultValue['bool'] = 'true';
+
+        return $defaultValue[$type];
+    }
 }

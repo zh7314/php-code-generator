@@ -1,4 +1,4 @@
-# php-code-generator
+# code-generator
 
 [English doc](./README.en.md)
 
