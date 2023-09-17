@@ -9,8 +9,12 @@ use ZX\Tool\MysqlOperation;
 
 class Goravel extends Generator
 {
+    //文件头部
+    protected static $fileHeaer = '';
     //文件后缀
     protected static $fileSuffix = '.go';
+    //应用根路径
+    protected static $appPath = 'app';
     //控制器文件后缀
     protected static $controllerSuffix = '_controller';
     //服务文件后缀
@@ -27,8 +31,6 @@ class Goravel extends Generator
     protected static $modelPath = 'models';
     //请求文件路径
     protected static $requestPath = 'requests';
-    //应用根路径
-    protected static $appPath = 'app';
     //控制器目录名称
     protected static $allControllerPath = '';
     //服务目录名称
@@ -37,8 +39,7 @@ class Goravel extends Generator
     protected static $allModelPath = '';
     //模型目录名称
     protected static $allRequestPath = '';
-    //文件头部
-    protected static $fileHeaer = '';
+
     //不需要处理的字段
     protected static $notDeal = ['id', 'create_at', 'update_at', 'is_delete', 'delete_at', 'create_time', 'update_time'];
 
