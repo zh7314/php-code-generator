@@ -5,21 +5,17 @@ include_once './../src/Tool/File.php';
 include_once './../src/Tool/Hump.php';
 include_once './../src/Tool/Mysql.php';
 include_once './../src/Tool/MysqlOperation.php';
-include_once './../src/BaseGenerator.php';
-include_once './../src/Generator/LaravelCamel.php';
-include_once './../src/Generator/LaravelSnake.php';
+include_once './../src/Generator.php';
+include_once './../src/Generator/Laravel.php';
 include_once './../src/Generator/LaravelSoftDelZx.php';
-include_once './../src/Generator/WebmanCamel.php';
-include_once './../src/Generator/WebmanSnake.php';
+include_once './../src/Generator/Webman.php';
 include_once './../src/Generator/Goravel.php';
 
-use ZX\Tool\File;
 use ZX\Tool\MysqlOperation;
-use ZX\Generator\LaravelCamel;
+use ZX\Generator\Laravel;
 use ZX\Generator\LaravelSnake;
 use ZX\Generator\LaravelSoftDelZx;
-use ZX\Generator\WebmanCamel;
-use ZX\Generator\WebmanSnake;
+use ZX\Generator\Webman;
 use ZX\Generator\Goravel;
 
 $param = [
@@ -38,8 +34,8 @@ MysqlOperation::setConnection($param);
  * 非软删除版本 变量蛇形命名模版
  */
 
-LaravelSnake::generatorAllTable();
-LaravelSnake::generatorAllRouter();
+//LaravelSnake::generatorAllTable();
+//LaravelSnake::generatorAllRouter();
 
 
 /*
@@ -76,6 +72,5 @@ LaravelSnake::generatorAllRouter();
 
 //GoravelSnake::generatorAllTable();
 
-Goravel::generatorTable("admin_group");
-
-//GoravelSnake::generatorRouter("admin_group");
+Goravel::genTable("admin_group");
+//Goravel::genRouter("admin_group");
