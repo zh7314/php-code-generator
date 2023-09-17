@@ -3,7 +3,7 @@
 namespace ZX\Tool;
 
 use Exception;
-use ZX\BaseGenerator;
+use ZX\Generator;
 
 class File
 {
@@ -71,7 +71,7 @@ class File
      * @return false|string
      * @throws Exception
      */
-    public static function getFileContent(BaseGenerator $Generator, string $filePath = '', string $templateName = '')
+    public static function getFileContent(Generator $Generator, string $filePath = '', string $templateName = '')
     {
         if (empty($templateName)) {
             throw new Exception('template name is null');

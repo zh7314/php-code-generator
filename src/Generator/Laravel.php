@@ -2,12 +2,12 @@
 
 namespace ZX\Generator;
 
-use ZX\BaseGenerator;
+use ZX\Generator;
 use ZX\Tool\File;
 use ZX\Tool\Hump;
 use ZX\Tool\MysqlOperation;
 
-class Laravel extends BaseGenerator
+class Laravel extends Generator
 {
     //文件后缀
     protected static $fileSuffix = '.php';

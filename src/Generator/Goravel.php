@@ -2,12 +2,12 @@
 
 namespace ZX\Generator;
 
-use ZX\BaseGenerator;
+use ZX\Generator;
 use ZX\Tool\File;
 use ZX\Tool\Hump;
 use ZX\Tool\MysqlOperation;
 
-class Goravel extends BaseGenerator
+class Goravel extends Generator
 {
     //文件后缀
     protected static $fileSuffix = '.go';
@@ -47,25 +47,11 @@ class Goravel extends BaseGenerator
         return basename(__CLASS__);
     }
 
-    public static function generatorAllTable()
-    {
-        $table = MysqlOperation::getAllTableName();
-
-        if (!empty($table)) {
-            foreach ($table as $k => $v) {
-                self::generatorTable($v['TABLE_NAME']);
-            }
-        }
-    }
-
-    public static function generatorPath(BaseGenerator $Generator, string $path = './')
+    public static function genPath(string $path = './')
     {
         self::$allControllerPath = $path . self::$appPath . DIRECTORY_SEPARATOR . self::$controllerPath;
-
         self::$allServicePath = $path . self::$appPath . DIRECTORY_SEPARATOR . self::$servicePath;
-
         self::$allModelPath = $path . self::$appPath . DIRECTORY_SEPARATOR . self::$modelPath;
-
         self::$allRequestPath = $path . self::$appPath . DIRECTORY_SEPARATOR . self::$requestPath;
 
         File::makeFile(self::$allControllerPath);
@@ -74,26 +60,36 @@ class Goravel extends BaseGenerator
         File::makeFile(self::$allRequestPath);
     }
 
-    public static function generatorTable(string $tableName)
+    public static function genAllTable(bool $case = false)
+    {
+        $table = MysqlOperation::getAllTableName();
+
+        if (!empty($table)) {
+            foreach ($table as $k => $v) {
+                self::genTable($v['TABLE_NAME']);
+            }
+        }
+    }
+
+    public static function genTable(string $tableName, bool $case = false)
     {
         //获取表的字段
         $column = MysqlOperation::getTableColumn($tableName, true);
         //生成目录
-        self::generatorPath(new self());
+        self::genPath();
 
         //生产控制器
-        self::generatorController($tableName, $column);
+        self::genController($tableName, $column);
         //生产服务
-        self::generatorService($tableName, $column);
+        self::genService($tableName, $column);
         //生产模型
-        self::generatorModel($tableName, $column);
+        self::genModel($tableName, $column);
         //生产请求
-        self::generatorRequest($tableName, $column);
+        self::genRequest($tableName, $column);
     }
 
-    public static function generatorController(string $tableName, array $column)
+    public static function genController(string $tableName, array $column)
     {
-        //表名
         $upTableName = ucfirst(Hump::camelize($tableName));
 
         $content = File::getFileContent(new self(), 'Controller.template', self::getClassName());
@@ -107,15 +103,15 @@ class Goravel extends BaseGenerator
         File::writeToFile($upTableName . self::$controllerSuffix . self::$fileSuffix, self::$allControllerPath, $contents);
     }
 
-    public static function generatorService(string $tableName, array $column)
+    public static function genService(string $tableName, array $column)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
         $lcTableName = lcfirst($upTableName);
 
         $content = File::getFileContent(new self(), 'Service.template', self::getClassName());
 
-        $ifParamString = self::generatorIfParamServiceString($tableName, $column);
-        $paramString = self::generatorParamServiceString($tableName, $column);
+        $ifParamString = self::genServiceIfParam($tableName, $column);
+        $paramString = self::genServiceParam($tableName, $column);
 
         $search = ['{upTableName}', '{paramString}', '{lcTableName}', '{ifParamString}'];
         $replace = [$upTableName, $paramString, $lcTableName, $ifParamString];
@@ -126,7 +122,7 @@ class Goravel extends BaseGenerator
         File::writeToFile($upTableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
     }
 
-    public static function generatorModel(string $tableName, array $column)
+    public static function genModel(string $tableName, array $column)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -141,7 +137,7 @@ class Goravel extends BaseGenerator
         File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
     }
 
-    public static function generatorParamString(array $column, bool $camel = false)
+    public static function genParamString(array $column, bool $camel = false)
     {
 
         $return = '';
@@ -160,7 +156,7 @@ class Goravel extends BaseGenerator
         return $return;
     }
 
-    public static function generatorParamServiceString(string $tableName, array $column, bool $camel = false)
+    public static function genParamServiceString(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -185,7 +181,7 @@ EOF;
     }
 
 
-    public static function generatorIfParamServiceString(string $tableName, array $column, bool $camel = false)
+    public static function genServiceIfParam(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -210,18 +206,18 @@ EOF;
         return $return;
     }
 
-    public static function generatorAllRouter(bool $print = false)
+    public static function genAllRouter(bool $print = false)
     {
         $table = MysqlOperation::getAllTableName();
 
         if (!empty($table)) {
             foreach ($table as $k => $v) {
-                self::generatorRouter($v['TABLE_NAME'], $print);
+                self::genRouter($v['TABLE_NAME'], $print);
             }
         }
     }
 
-    public static function generatorRouter(string $tableName, bool $print = false)
+    public static function genRouter(string $tableName, bool $print = false)
     {
 
         $camelizeTableName = Hump::camelize($tableName);
@@ -242,7 +238,7 @@ EOF;
         }
     }
 
-    public static function generatorRequest(string $tableName, array $column)
+    public static function genRequest(string $tableName, array $column)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 

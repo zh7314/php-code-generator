@@ -2,7 +2,7 @@
 
 namespace ZX;
 
-abstract class BaseGenerator
+abstract class Generator
 {
     //模版文件路径
     protected static $templatePath = __DIR__ . DIRECTORY_SEPARATOR . 'Template';
