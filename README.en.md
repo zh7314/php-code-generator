@@ -14,7 +14,7 @@ Currently only support laravel, webman, goravel, drogon and so on will be suppor
 - [x] PHP-laravel camel case
 - [x] PHP-webman snake case
 - [x] PHP-webman camel case
-- [ ] Golang-goravel snake case
+- [x] Golang-goravel snake case
 - [ ] Golang-goravel camel case
 - [ ] CPP-drogon snake case
 - [ ] CPP-drogon camel case

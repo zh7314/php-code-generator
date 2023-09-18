@@ -14,7 +14,7 @@ php `^7.2|^8.0`
 - [x] PHP-laravel 驼峰命名
 - [x] PHP-webman 蛇形命名
 - [x] PHP-webman 驼峰命名
-- [ ] Golang-goravel 蛇形命名
+- [x] Golang-goravel 蛇形命名
 - [ ] Golang-goravel 驼峰命名
 - [ ] CPP-drogon 蛇形命名
 - [ ] CPP-drogon 驼峰命名
