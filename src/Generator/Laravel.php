@@ -183,7 +183,6 @@ EOF;
             $return = $return . $str . PHP_EOL;
         }
         return $return;
-
     }
 
     public static function genModel(string $tableName, array $column, bool $camel = false)
@@ -227,5 +226,4 @@ EOF;
 
         File::writeToFile('router' . self::$fileSuffix, './', $content . PHP_EOL, 'a+', true);
     }
-
 }

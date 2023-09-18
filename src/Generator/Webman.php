@@ -41,13 +41,13 @@ class Webman extends Generator
         return basename(__CLASS__);
     }
 
-    public static function generatorAllTable()
+    public static function genAllTable(bool $camel = false)
     {
         $table = MysqlOperation::getAllTableName();
 
         if (!empty($table)) {
             foreach ($table as $k => $v) {
-                self::generatorTable($v['TABLE_NAME']);
+                self::genTable($v['TABLE_NAME'], $camel);
             }
         }
     }
@@ -63,28 +63,28 @@ class Webman extends Generator
         File::makeFile(self::$allModelPath);
     }
 
-    public static function generatorTable(string $tableName)
+    public static function genTable(string $tableName, bool $camel = false)
     {
         //获取表的字段
         $column = MysqlOperation::getTableColumn($tableName);
         //生成目录
         self::genPath();
         //生产控制器
-        self::generatorController($tableName, $column);
+        self::genController($tableName, $column, $camel);
         //生产服务
-        self::generatorService($tableName, $column);
+        self::genService($tableName, $column, $camel);
         //生产模型
-        self::generatorModel($tableName, $column);
+        self::genModel($tableName, $column, $camel);
     }
 
-    public static function generatorController(string $tableName, array $column)
+    public static function genController(string $tableName, array $column, bool $camel = false)
     {
         //表名
         $upTableName = ucfirst(Hump::camelize($tableName));
-        //列数据
-        $paramString = self::generatorParamString($column);
 
         $content = File::getFileContent(new self(), 'Controller.template', self::getClassName());
+        //列数据
+        $paramString = self::genControllerParam($column, $camel);
 
         $search = ['{upTableName}', '{paramString}'];
         $replace = [$upTableName, $paramString];
@@ -95,16 +95,36 @@ class Webman extends Generator
         File::writeToFile($upTableName . self::$controllerSuffix . self::$fileSuffix, self::$allControllerPath, $contents);
     }
 
-    public static function generatorService(string $tableName, array $column)
+    public static function genControllerParam(array $column, bool $camel = false)
+    {
+        $return = '';
+        $array = MysqlOperation::transforColumnMysqlToPHP($column);
+
+        foreach ($array as $k => $v) {
+            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
+                continue;
+            }
+            $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
+            //蛇形转驼峰
+            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+
+            $str = <<<EOF
+            \$where['{$v['COLUMN_NAME']}'] = parameterCheck(\$request->input('{$v['COLUMN_NAME']}'), '{$v["DATA_TYPE"]}', {$default});
+EOF;
+            $return = $return . $str . PHP_EOL;
+        }
+        return $return;
+    }
+
+    public static function genService(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
         $lcTableName = lcfirst($upTableName);
 
-        $paramString = self::generatorParamServiceString($tableName, $column);
-
         $content = File::getFileContent(new self(), 'Service.template', self::getClassName());
 
-        $ifParamString = self::generatorIfParamServiceString($tableName, $column);
+        $ifParamString = self::genServiceIfParam($tableName, $column, $camel);
+        $paramString = self::genServiceParam($tableName, $column, $camel);
 
         $search = ['{upTableName}', '{paramString}', '{lcTableName}', '{ifParamString}'];
         $replace = [$upTableName, $paramString, $lcTableName, $ifParamString];
@@ -115,7 +135,56 @@ class Webman extends Generator
         File::writeToFile($upTableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
     }
 
-    public static function generatorModel(string $tableName, array $column)
+    public static function genServiceIfParam(string $tableName, array $column, bool $camel = false)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
+
+        $lcTableName = lcfirst($upTableName);
+
+        $return = '';
+        $array = MysqlOperation::transforColumnMysqlToPHP($column);
+        foreach ($array as $k => $v) {
+            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
+                continue;
+            }
+
+            //蛇形转驼峰
+            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+
+            $str = <<<EOF
+            if (!empty(\$where['{$v['COLUMN_NAME']}'])) {
+            \${$lcTableName} = \${$lcTableName}->where('{$v['COLUMN_NAME']}', \$where['{$v['COLUMN_NAME']}']);
+            }
+EOF;
+            $return = $return . $str . PHP_EOL;
+        }
+        return $return;
+    }
+
+    public static function genServiceParam(string $tableName, array $column, bool $camel = false)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
+
+        $lcTableName = lcfirst($upTableName);
+
+        $return = '';
+        $array = MysqlOperation::transforColumnMysqlToPHP($column);
+        foreach ($array as $k => $v) {
+            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
+                continue;
+            }
+            //蛇形转驼峰
+            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+
+            $str = <<<EOF
+            isset(\$where['{$v['COLUMN_NAME']}']) && \${$lcTableName}->{$v['COLUMN_NAME']} = \$where['{$v['COLUMN_NAME']}'];
+EOF;
+            $return = $return . $str . PHP_EOL;
+        }
+        return $return;
+    }
+
+    public static function genModel(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -130,60 +199,19 @@ class Webman extends Generator
         File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
     }
 
-    public static function generatorParamString(array $column, bool $camel = false)
-    {
-
-        $return = '';
-        $array = MysqlOperation::transforColumnMysqlToPHP($column);
-
-        foreach ($array as $k => $v) {
-            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
-                continue;
-            }
-            //蛇形转驼峰
-            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
-
-            $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
-            $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
-        }
-        return $return;
-    }
-
-    public static function generatorParamServiceString(string $tableName, array $column, bool $camel = false)
-    {
-        $upTableName = ucfirst(Hump::camelize($tableName));
-
-        $lcTableName = lcfirst($upTableName);
-
-        $return = '';
-        $array = MysqlOperation::transforColumnMysqlToPHP($column);
-        foreach ($array as $k => $v) {
-            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
-                continue;
-            }
-            //蛇形转驼峰
-            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
-
-            $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
-        }
-        return $return;
-
-    }
-
-    public static function generatorAllRouter(bool $print = false)
+    public static function generatorAllRouter()
     {
         $table = MysqlOperation::getAllTableName();
 
         if (!empty($table)) {
             foreach ($table as $k => $v) {
-                self::generatorRouter($v['TABLE_NAME'], $print);
+                self::generatorRouter($v['TABLE_NAME']);
             }
         }
     }
 
-    public static function generatorRouter(string $tableName, bool $print = false)
+    public static function generatorRouter(string $tableName)
     {
-
         $camelizeTableName = Hump::camelize($tableName);
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -194,36 +222,7 @@ class Webman extends Generator
         $content = str_replace($search, $replace, $content);
 
 //        $content = self::$fileHeaer . PHP_EOL . $content;
-        //右键查看源代码
-        if ($print) {
-            print_r($content);
-        } else {
-            File::writeToFile('router.php', './', $content . PHP_EOL, 'a+', true);
-        }
+
+        File::writeToFile('router' . self::$fileSuffix, './', $content . PHP_EOL, 'a+', true);
     }
-
-
-    public static function generatorIfParamServiceString(string $tableName, array $column, bool $camel = false)
-    {
-        $upTableName = ucfirst(Hump::camelize($tableName));
-
-        $lcTableName = lcfirst($upTableName);
-
-        $return = '';
-        $array = MysqlOperation::transforColumnMysqlToPHP($column);
-        foreach ($array as $k => $v) {
-            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
-                continue;
-            }
-
-            //蛇形转驼峰
-            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
-
-            $return = $return . 'if (!empty($where' . "['{$v['COLUMN_NAME']}']" . ')) {' . PHP_EOL .
-                '$' . $lcTableName . '=' . '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
-        }
-        return $return;
-    }
-
-
 }
