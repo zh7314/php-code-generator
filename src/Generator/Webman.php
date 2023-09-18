@@ -9,6 +9,8 @@ use ZX\Tool\MysqlOperation;
 
 class Webman extends Generator
 {
+    //文件头部
+    protected static $fileHeaer = '<?php ';
     //文件后缀
     protected static $fileSuffix = '.php';
     //控制器文件后缀
@@ -31,50 +33,12 @@ class Webman extends Generator
     protected static $allServicePath = '';
     //模型目录名称
     protected static $allModelPath = '';
-    //文件头部
-    protected static $fileHeaer = '<?php ';
     //不需要处理的字段
     protected static $notDeal = ['id', 'create_at', 'update_at', 'is_delete', 'delete_at', 'create_time', 'update_time'];
-
-    //获取app path
-    public static function getAppPath()
-    {
-        return self::$appPath;
-    }
-
-    public static function getControllerPath()
-    {
-        return self::$controllerPath;
-    }
-
-    public static function getServicePath()
-    {
-        return self::$servicePath;
-    }
-
-    public static function getModelPath()
-    {
-        return self::$modelPath;
-    }
 
     public static function getClassName()
     {
         return basename(__CLASS__);
-    }
-
-    public static function setAllControllerPath(string $allControllerPath)
-    {
-        self::$allControllerPath = $allControllerPath;
-    }
-
-    public static function setAllServicePath(string $allServicePath)
-    {
-        self::$allServicePath = $allServicePath;
-    }
-
-    public static function setAllModelPath(string $allModelPath)
-    {
-        self::$allModelPath = $allModelPath;
     }
 
     public static function generatorAllTable()
@@ -88,12 +52,23 @@ class Webman extends Generator
         }
     }
 
+    public static function genPath(string $path = './')
+    {
+        self::$allControllerPath = $path . self::$appPath . DIRECTORY_SEPARATOR . self::$controllerPath;
+        self::$allServicePath = $path . self::$appPath . DIRECTORY_SEPARATOR . self::$servicePath;
+        self::$allModelPath = $path . self::$appPath . DIRECTORY_SEPARATOR . self::$modelPath;
+
+        File::makeFile(self::$allControllerPath);
+        File::makeFile(self::$allServicePath);
+        File::makeFile(self::$allModelPath);
+    }
+
     public static function generatorTable(string $tableName)
     {
         //获取表的字段
         $column = MysqlOperation::getTableColumn($tableName);
         //生成目录
-        File::generatorPath(new self());
+        self::genPath();
         //生产控制器
         self::generatorController($tableName, $column);
         //生产服务

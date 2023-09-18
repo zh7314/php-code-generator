@@ -206,10 +206,14 @@ EOF;
         foreach ($array as $v) {
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
 
-            $str = '';
             if ($v['COLUMN_NAME'] == 'id') {
+                continue;
+            }
+
+            $str = '';
+            if ($v['COLUMN_NAME'] == 'create_at' || $v['COLUMN_NAME'] == 'update_at') {
                 $str = <<<EOF
-    ID            {$v['DATA_TYPE']}           `gorm:"column:id;primaryKey;autoIncrement:true" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+    {$upColumnName}            {$v['DATA_TYPE']}           `gorm:"-" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
             } else {
                 $str = <<<EOF

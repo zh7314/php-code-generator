@@ -7,6 +7,7 @@ import (
 const TableName{upTableName} = "{tableName}"
 
 type {upTableName} struct {
+	ID            int64           `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"` // comment ID
 {paramString}
 }
 

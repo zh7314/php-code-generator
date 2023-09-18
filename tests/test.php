@@ -13,7 +13,6 @@ include_once './../src/Generator/Goravel.php';
 
 use ZX\Tool\MysqlOperation;
 use ZX\Generator\Laravel;
-use ZX\Generator\LaravelSnake;
 use ZX\Generator\LaravelSoftDelZx;
 use ZX\Generator\Webman;
 use ZX\Generator\Goravel;
@@ -31,46 +30,44 @@ $param = [
 MysqlOperation::setConnection($param);
 
 /*
- * 非软删除版本 变量蛇形命名模版
+ * laravel生成器,参考项目: https://github.com/zh7314/zx-website
+ * $camel true=> case camel,true=> case snake
  */
 
-//LaravelSnake::generatorAllTable();
-//LaravelSnake::generatorAllRouter();
+Laravel::genAllTable();
+Laravel::genAllRouter();
 
+Laravel::genTable("table_name");
+Laravel::genRouter("table_name");
 
 /*
- * 非软删除版本 变量驼峰命名模版
+ * webman 生成器,参考项目: https://github.com/zh7314/zx-webman-website
+ * $camel true=> case camel,true=> case snake
  */
 
-//LaravelCamel::generatorAllTable();
-//LaravelCamel::generatorAllRouter();
+//Webman::genAllTable();
+//Webman::genAllRouter();
+//
+//Webman::genTable("table_name");
+//Webman::genRouter("table_name");
 
 /*
- * 软删除版本特殊代码，变量蛇形命名模版
+ * goravel 生成器,参考项目: https://github.com/zh7314/zx-goravel-website
+ * $camel true=> case camel,true=> case snake
  */
 
-//LaravelSoftDelZx::generatorAllTable();
-//LaravelSoftDelZx::generatorAllRouter();
+//Goravel::genAllTable(false);
+//Goravel::genAllRouter();
+//
+//Goravel::genTable("table_name");
+//Goravel::genRouter("table_name");
 
 /*
- * 非软删除版本 变量驼峰命名模版
+ * laravelzx 定制化生成器
  */
 
-//WebmanCamel::generatorAllTable();
-//WebmanCamel::generatorAllRouter();
-
-/*
- * 非软删除版本 变量蛇形命名模版
- */
-
-//WebmanSnake::generatorAllTable();
-//WebmanSnake::generatorAllRouter();
-
-/*
- * 非软删除版本 go 变量蛇形命名模版
- */
-
-//GoravelSnake::generatorAllTable();
-
-Goravel::genTable("admin_group");
-//Goravel::genRouter("admin_group");
+//LaravelSoftDelZx::genAllTable();
+//LaravelSoftDelZx::genAllRouter();
+//
+//LaravelSoftDelZx::genTable("table_name");
+//LaravelSoftDelZx::genRouter("table_name");
