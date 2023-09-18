@@ -1,4 +1,4 @@
-router.Prefix("{upTableName}").Group(func(router1 route.Router) {
+router.Prefix("{camelizeTableName}").Group(func(router1 route.Router) {
 			router1.Post("/getList", admin.New{upTableName}Controller().GetList)
 			router1.Post("/getAll", admin.New{upTableName}Controller().GetAll)
 			router1.Post("/add", admin.New{upTableName}Controller().Add)

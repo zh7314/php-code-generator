@@ -5,6 +5,7 @@ import (
 	"goravel/app/models"
 	requests "goravel/app/requests/admin"
 	"goravel/app/utils/gconv"
+	"html"
 )
 
 type {upTableName}Service struct {
@@ -47,26 +48,25 @@ func (r *{upTableName}Service) GetAll(request requests.{upTableName}Request) ([]
 
 func (r *{upTableName}Service) Add(request requests.{upTableName}Request) (bool, error) {
 
-	var admin models.{upTableName}
+	var {lcTableName} models.{upTableName}
 
 	{paramString}
 
-	err := facades.Orm().Query().Create(&admin)
-	if err == nil {
-		return false, err
-	}
-
+	err := facades.Orm().Query().Create(&{lcTableName})
+	if err != nil {
+    		return false, err
+    }
 	return true, nil
 }
 
 func (r *{upTableName}Service) Save(request requests.{upTableName}Request) (bool, error) {
 
-	var admin models.{upTableName}
+	var {lcTableName} models.{upTableName}
 
-	admin.ID = request.ID
+	{lcTableName}.ID = request.ID
 	{paramString}
 
-	err := facades.Orm().Query().Save(&admin)
+	err := facades.Orm().Query().Save(&{lcTableName})
 	if err != nil {
 		return false, err
 	}

@@ -16,13 +16,13 @@ class Goravel extends Generator
     //应用根路径
     protected static $appPath = 'app';
     //控制器文件后缀
-    protected static $controllerSuffix = '_controller';
+    protected static $controllerSuffix = 'Controller';
     //服务文件后缀
-    protected static $serviceSuffix = '_service';
+    protected static $serviceSuffix = 'Service';
     //模型文件后缀
     protected static $modelSuffix = '';
     //模型文件后缀
-    protected static $requestSuffix = '_request';
+    protected static $requestSuffix = 'Request';
     //控制器文件路径
     protected static $controllerPath = 'http' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'admin';
     //服务文件路径
@@ -30,7 +30,7 @@ class Goravel extends Generator
     //模型文件路径
     protected static $modelPath = 'models';
     //请求文件路径
-    protected static $requestPath = 'requests';
+    protected static $requestPath = 'requests' . DIRECTORY_SEPARATOR . 'admin';
     //控制器目录名称
     protected static $allControllerPath = '';
     //服务目录名称
@@ -162,10 +162,17 @@ EOF;
             }
 
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
-
-            $str = <<<EOF
-admin.{$upColumnName} = request.{$upColumnName}
+            $str = '';
+            if ($v['DATA_TYPE'] == 'string') {
+                $str = <<<EOF
+{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
 EOF;
+            } else {
+                $str = <<<EOF
+{$lcTableName}.{$upColumnName} = request.{$upColumnName}
+EOF;
+            }
+
             $return = $return . $str . PHP_EOL;
         }
         return $return;
@@ -176,11 +183,11 @@ EOF;
         $upTableName = ucfirst(Hump::camelize($tableName));
 
         $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
-        
+
         $paramString = self::genModelParam($tableName, $column, $camel);
 
-        $search = ['{upTableName}', '{paramString}'];
-        $replace = [$upTableName, $paramString];
+        $search = ['{upTableName}', '{paramString}', '{tableName}'];
+        $replace = [$upTableName, $paramString, $tableName];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . PHP_EOL . $content;
@@ -197,15 +204,19 @@ EOF;
         $return = '';
         $array = MysqlOperation::transforColumnMysqlToGolang($column);
         foreach ($array as $v) {
-            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
-                continue;
-            }
-
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
 
-            $str = <<<EOF
-admin.{$upColumnName} = request.{$upColumnName}
+            $str = '';
+            if ($v['COLUMN_NAME'] == 'id') {
+                $str = <<<EOF
+    ID            {$v['DATA_TYPE']}           `gorm:"column:id;primaryKey;autoIncrement:true" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
+            } else {
+                $str = <<<EOF
+    {$upColumnName}            {$v['DATA_TYPE']}           `gorm:"column:{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+EOF;
+            }
+
             $return = $return . $str . PHP_EOL;
         }
         return $return;
@@ -224,34 +235,54 @@ EOF;
 
     public static function genRouter(string $tableName)
     {
-
         $camelizeTableName = Hump::camelize($tableName);
         $upTableName = ucfirst(Hump::camelize($tableName));
 
         $content = File::getFileContent(new self(), 'Router.template', self::getClassName());
 
-        $search = ['{upTableName}', '{tableName}', '{$camelizeTableName}'];
+        $search = ['{upTableName}', '{tableName}', '{camelizeTableName}'];
         $replace = [$upTableName, $tableName, $camelizeTableName];
         $content = str_replace($search, $replace, $content);
 
 //        $content = self::$fileHeaer . PHP_EOL . $content;
-        //右键查看源代码
 
-        File::writeToFile('router' . self::$fileSuffix, self::$allModelPath, $content . PHP_EOL, 'a+', true);
+        File::writeToFile('router' . self::$fileSuffix, './', $content . PHP_EOL, 'a+', true);
     }
 
     public static function genRequest(string $tableName, array $column, bool $camel = false)
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
-        $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
+        $content = File::getFileContent(new self(), 'Request.template', self::getClassName());
 
-        $search = ['{upTableName}', '{tableName}'];
-        $replace = [$upTableName, $tableName];
+        $paramString = self::genRequestParam($tableName, $column, $camel);
+
+        $search = ['{upTableName}', '{paramString}'];
+        $replace = [$upTableName, $paramString];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . PHP_EOL . $content;
 
-        File::writeToFile($upTableName . self::$requestSuffix . self::$fileSuffix, self::$allModelPath, $contents);
+        File::writeToFile($upTableName . self::$requestSuffix . self::$fileSuffix, self::$allRequestPath, $contents);
+    }
+
+    public static function genRequestParam(string $tableName, array $column, bool $camel = false)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
+
+        $return = '';
+        $array = MysqlOperation::transforColumnMysqlToGolang($column);
+        foreach ($array as $v) {
+            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
+                continue;
+            }
+            $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
+
+            $str = <<<EOF
+    {$upColumnName}            {$v['DATA_TYPE']}           `form:"{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+EOF;
+            $return = $return . $str . PHP_EOL;
+        }
+        return $return;
     }
 }

@@ -22,11 +22,11 @@ func (r *{upTableName}Controller) GetList(ctx http.Context) http.Response {
 	}
 
 	data, ok := admin.New{upTableName}Service().GetList(request)
-	if ok != nil {
-		return response.Fail(ctx, "", ok.Error())
-	} else {
-		return response.Success(ctx, data, "获取成功")
-	}
+	if ok == nil {
+    	return response.Success(ctx, data, "成功")
+    } else {
+    	return response.Fail(ctx, "", ok.Error())
+    }
 }
 
 func (r *{upTableName}Controller) GetAll(ctx http.Context) http.Response {
@@ -37,11 +37,11 @@ func (r *{upTableName}Controller) GetAll(ctx http.Context) http.Response {
 	}
 
 	data, ok := admin.New{upTableName}Service().GetAll(request)
-	if ok != nil {
-		return response.Fail(ctx, "", ok.Error())
-	} else {
-		return response.Success(ctx, data, "失败")
-	}
+	if ok == nil {
+    	return response.Success(ctx, data, "成功")
+    } else {
+    	return response.Fail(ctx, "", ok.Error())
+    }
 }
 
 func (r *{upTableName}Controller) Add(ctx http.Context) http.Response {
@@ -52,11 +52,11 @@ func (r *{upTableName}Controller) Add(ctx http.Context) http.Response {
 	}
 
 	data, ok := admin.New{upTableName}Service().Add(request)
-	if ok != nil {
-		return response.Fail(ctx, "", ok.Error())
-	} else {
-		return response.Success(ctx, data, "失败")
-	}
+	if ok == nil {
+    	return response.Success(ctx, data, "成功")
+    } else {
+    	return response.Fail(ctx, "", ok.Error())
+    }
 }
 
 func (r *{upTableName}Controller) Save(ctx http.Context) http.Response {
@@ -67,11 +67,11 @@ func (r *{upTableName}Controller) Save(ctx http.Context) http.Response {
 	}
 
 	data, ok := admin.New{upTableName}Service().Save(request)
-	if ok != nil {
-		return response.Fail(ctx, "", ok.Error())
-	} else {
-		return response.Success(ctx, data, "失败")
-	}
+	if ok == nil {
+    	return response.Success(ctx, data, "成功")
+    } else {
+    	return response.Fail(ctx, "", ok.Error())
+    }
 }
 
 func (r *{upTableName}Controller) Delete(ctx http.Context) http.Response {
@@ -82,9 +82,9 @@ func (r *{upTableName}Controller) Delete(ctx http.Context) http.Response {
 	}
 
 	data, ok := admin.New{upTableName}Service().Delete(request.ID)
-	if ok != nil {
-		return response.Fail(ctx, "", ok.Error())
+	if ok == nil {
+		return response.Success(ctx, data, "成功")
 	} else {
-		return response.Success(ctx, data, "失败")
+		return response.Fail(ctx, "", ok.Error())
 	}
 }
