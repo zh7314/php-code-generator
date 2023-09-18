@@ -111,8 +111,8 @@ class Goravel extends Generator
 
         $content = File::getFileContent(new self(), 'Service.template', self::getClassName());
 
-        $ifParamString = self::genServiceIfParam($tableName, $column);
-        $paramString = self::genServiceParam($tableName, $column);
+        $ifParamString = self::genServiceIfParam($tableName, $column, $camel);
+        $paramString = self::genServiceParam($tableName, $column, $camel);
 
         $search = ['{upTableName}', '{paramString}', '{lcTableName}', '{ifParamString}'];
         $replace = [$upTableName, $paramString, $lcTableName, $ifParamString];

@@ -1,18 +1,12 @@
 namespace App\Models;
 
-use Eloquence\Behaviours\CamelCasing;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class {upTableName} extends Model {
-
-    use CamelCasing;
-    use SoftDeletes;
 
     protected $table = '{tableName}';
     protected $primaryKey = 'id';
     protected $guarded = [];
-    public $timestamps = false;
 
-    const DELETED_AT = 'delete_at';
+    public $timestamps = false;
 }

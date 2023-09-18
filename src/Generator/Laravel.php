@@ -58,12 +58,12 @@ class Laravel extends Generator
 
         if (!empty($table)) {
             foreach ($table as $k => $v) {
-                self::generatorTable($v['TABLE_NAME'], $camel);
+                self::genTable($v['TABLE_NAME'], $camel);
             }
         }
     }
 
-    public static function generatorTable(string $tableName, bool $camel = false)
+    public static function genTable(string $tableName, bool $camel = false)
     {
         //获取表的字段
         $column = MysqlOperation::getTableColumn($tableName);
@@ -82,7 +82,7 @@ class Laravel extends Generator
         //表名
         $upTableName = ucfirst(Hump::camelize($tableName));
         //列数据
-        $paramString = self::genControllerParam($column);
+        $paramString = self::genControllerParam($column, $camel);
 
         $content = File::getFileContent(new self(), 'Controller.template', self::getClassName());
 
@@ -105,11 +105,14 @@ class Laravel extends Generator
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
+            $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
             //蛇形转驼峰
             $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
 
-            $default = MysqlOperation::getdefaultValue($v['DATA_TYPE']);
-            $return = $return . '$where' . "['{$v['COLUMN_NAME']}']" . "= parameterCheck(" . '$request->input(' . "'{$v['COLUMN_NAME']}'" . '),' . "'{$v["DATA_TYPE"]}'" . ',' . "{$default}" . ');' . PHP_EOL;
+            $str = <<<EOF
+            \$where['{$v['COLUMN_NAME']}'] = parameterCheck(\$request->input('{$v['COLUMN_NAME']}'), '{$v["DATA_TYPE"]}', {$default});
+EOF;
+            $return = $return . $str . PHP_EOL;
         }
         return $return;
     }
@@ -121,8 +124,8 @@ class Laravel extends Generator
 
         $content = File::getFileContent(new self(), 'Service.template', self::getClassName());
 
-        $paramString = self::genServiceParam($tableName, $column);
-        $ifParamString = self::genServiceIfParam($tableName, $column);
+        $ifParamString = self::genServiceIfParam($tableName, $column, $camel);
+        $paramString = self::genServiceParam($tableName, $column, $camel);
 
         $search = ['{upTableName}', '{paramString}', '{lcTableName}', '{ifParamString}'];
         $replace = [$upTableName, $paramString, $lcTableName, $ifParamString];
@@ -131,27 +134,6 @@ class Laravel extends Generator
         $contents = self::$fileHeaer . PHP_EOL . $content;
 
         File::writeToFile($upTableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
-    }
-
-    public static function genServiceParam(string $tableName, array $column, bool $camel = false)
-    {
-        $upTableName = ucfirst(Hump::camelize($tableName));
-
-        $lcTableName = lcfirst($upTableName);
-
-        $return = '';
-        $array = MysqlOperation::transforColumnMysqlToPHP($column);
-        foreach ($array as $k => $v) {
-            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
-                continue;
-            }
-            //蛇形转驼峰
-            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
-
-            $return = $return . 'isset($where' . "['{$v['COLUMN_NAME']}']" . ') && $' . "$lcTableName" . '->' . "{$v['COLUMN_NAME']}" . ' = ' . '$where' . "['{$v['COLUMN_NAME']}']" . ';' . PHP_EOL;
-        }
-        return $return;
-
     }
 
     public static function genServiceIfParam(string $tableName, array $column, bool $camel = false)
@@ -170,12 +152,39 @@ class Laravel extends Generator
             //蛇形转驼峰
             $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
 
-            $return = $return . 'if (!empty($where' . "['{$v['COLUMN_NAME']}']" . ')) {' . PHP_EOL .
-                '$' . $lcTableName . '=' . '$' . $lcTableName . '->where(' . "'{$v['COLUMN_NAME']}'" . ', $where[' . "'{$v['COLUMN_NAME']}'" . ']);' . PHP_EOL . '}' . PHP_EOL;
+            $str = <<<EOF
+            if (!empty(\$where['{$v['COLUMN_NAME']}'])) {
+            \${$lcTableName} = \${$lcTableName}->where('{$v['COLUMN_NAME']}', \$where['{$v['COLUMN_NAME']}']);
+            }
+EOF;
+            $return = $return . $str . PHP_EOL;
         }
         return $return;
     }
 
+    public static function genServiceParam(string $tableName, array $column, bool $camel = false)
+    {
+        $upTableName = ucfirst(Hump::camelize($tableName));
+
+        $lcTableName = lcfirst($upTableName);
+
+        $return = '';
+        $array = MysqlOperation::transforColumnMysqlToPHP($column);
+        foreach ($array as $k => $v) {
+            if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
+                continue;
+            }
+            //蛇形转驼峰
+            $camel && $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+
+            $str = <<<EOF
+            isset(\$where['{$v['COLUMN_NAME']}']) && \${$lcTableName}->{$v['COLUMN_NAME']} = \$where['{$v['COLUMN_NAME']}'];
+EOF;
+            $return = $return . $str . PHP_EOL;
+        }
+        return $return;
+
+    }
 
     public static function genModel(string $tableName, array $column, bool $camel = false)
     {
@@ -205,7 +214,6 @@ class Laravel extends Generator
 
     public static function genRouter(string $tableName)
     {
-
         $camelizeTableName = Hump::camelize($tableName);
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -217,7 +225,7 @@ class Laravel extends Generator
 
 //        $content = self::$fileHeaer . PHP_EOL . $content;
 
-        File::writeToFile('router.php', './', $content . PHP_EOL, 'a+', true);
+        File::writeToFile('router' . self::$fileSuffix, './', $content . PHP_EOL, 'a+', true);
     }
 
 }
