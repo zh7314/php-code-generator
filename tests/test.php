@@ -31,7 +31,7 @@ MysqlOperation::setConnection($param);
 
 /*
  * laravel生成器,参考项目: https://github.com/zh7314/zx-website
- * $camel true=> case camel,true=> case snake
+ * $camel true => case camel,true => case snake
  */
 
 //Laravel::genAllTable();
@@ -41,8 +41,8 @@ MysqlOperation::setConnection($param);
 //Laravel::genRouter("table_name");
 
 /*
- * webman 生成器,参考项目: https://github.com/zh7314/zx-webman-website
- * $camel true=> case camel,true=> case snake
+ * webman 生成器,配合使用项目: https://github.com/zh7314/zx-webman-website
+ * $camel true => case camel,true => case snake
  */
 
 //Webman::genAllTable();
@@ -52,22 +52,34 @@ MysqlOperation::setConnection($param);
 //Webman::genRouter("table_name");
 
 /*
- * goravel 生成器,参考项目: https://github.com/zh7314/zx-goravel-website
- * $camel true=> case camel,true=> case snake
+ * goravel 生成器,配合使用项目: https://github.com/zh7314/zx-goravel-website
+ * $camel true => case camel,true => case snake
  */
 
-Goravel::genAllTable();
-Goravel::genAllRouter();
+//Goravel::genAllTable();
+//Goravel::genAllRouter();
 
 //Goravel::genTable("table_name");
 //Goravel::genRouter("table_name");
 
 /*
+ * todo
+ * drogon 生成器,配合使用项目: https://github.com/zh7314/zx-drogon-website
+ * $camel true => case camel,true => case snake
+ */
+
+//Drogon::genAllTable();
+//Drogon::genAllRouter();
+
+//Drogon::genTable("table_name");
+//Drogon::genRouter("table_name");
+
+/*
  * laravelzx 定制化生成器
  */
 
-LaravelSoftDelZx::genAllTable();
-LaravelSoftDelZx::genAllRouter();
+//LaravelSoftDelZx::genAllTable();
+//LaravelSoftDelZx::genAllRouter();
 
 //LaravelSoftDelZx::genTable("table_name");
 //LaravelSoftDelZx::genRouter("table_name");

@@ -99,7 +99,7 @@ class Goravel extends Generator
         $replace = [$upTableName];
         $content = str_replace($search, $replace, $content);
 
-        $contents = self::$fileHeaer . PHP_EOL . $content;
+        $contents = self::$fileHeaer . $content;
 
         File::writeToFile($upTableName . self::$controllerSuffix . self::$fileSuffix, self::$allControllerPath, $contents);
     }
@@ -118,7 +118,7 @@ class Goravel extends Generator
         $replace = [$upTableName, $paramString, $lcTableName, $ifParamString];
         $content = str_replace($search, $replace, $content);
 
-        $contents = self::$fileHeaer . PHP_EOL . $content;
+        $contents = self::$fileHeaer . $content;
 
         File::writeToFile($upTableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
     }
@@ -190,7 +190,7 @@ EOF;
         $replace = [$upTableName, $paramString, $tableName];
         $content = str_replace($search, $replace, $content);
 
-        $contents = self::$fileHeaer . PHP_EOL . $content;
+        $contents = self::$fileHeaer . $content;
 
         File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
     }
@@ -265,7 +265,7 @@ EOF;
         $replace = [$upTableName, $paramString];
         $content = str_replace($search, $replace, $content);
 
-        $contents = self::$fileHeaer . PHP_EOL . $content;
+        $contents = self::$fileHeaer . $content;
 
         File::writeToFile($upTableName . self::$requestSuffix . self::$fileSuffix, self::$allRequestPath, $contents);
     }
@@ -281,6 +281,10 @@ EOF;
                 continue;
             }
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
+
+            if ($camel) {
+                $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
+            }
 
             $str = <<<EOF
     {$upColumnName}            {$v['DATA_TYPE']}           `form:"{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}

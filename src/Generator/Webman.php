@@ -199,18 +199,18 @@ EOF;
         File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
     }
 
-    public static function generatorAllRouter()
+    public static function genAllRouter()
     {
         $table = MysqlOperation::getAllTableName();
 
         if (!empty($table)) {
             foreach ($table as $k => $v) {
-                self::generatorRouter($v['TABLE_NAME']);
+                self::genRouter($v['TABLE_NAME']);
             }
         }
     }
 
-    public static function generatorRouter(string $tableName)
+    public static function genRouter(string $tableName)
     {
         $camelizeTableName = Hump::camelize($tableName);
         $upTableName = ucfirst(Hump::camelize($tableName));
