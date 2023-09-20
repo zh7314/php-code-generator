@@ -163,16 +163,16 @@ EOF;
 
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
 
-//            $str = '';
-//            if ($v['DATA_TYPE'] == 'string') {
-//                $str = <<<EOF
-//{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
-//EOF;
-//            } else {
-            $str = <<<EOF
+            $str = '';
+            if ($v['DATA_TYPE'] == 'string') {
+                $str = <<<EOF
+{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
+EOF;
+            } else {
+                $str = <<<EOF
 {$lcTableName}.{$upColumnName} = request.{$upColumnName}
 EOF;
-//            }
+            }
 
             $return = $return . $str . PHP_EOL;
         }
@@ -314,16 +314,16 @@ EOF;
                 $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
             }
 
-            $str = '';
-            if ($v['DATA_TYPE'] == 'string') {
-                $str = <<<EOF
+//            $str = '';
+//            if ($v['DATA_TYPE'] == 'string') {
+//                $str = <<<EOF
+//    {$upColumnName}            {$v['DATA_TYPE']}           `form:"{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+//EOF;
+//            } else {
+            $str = <<<EOF
     {$upColumnName}            {$v['DATA_TYPE']}           `form:"{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
-            } else {
-                $str = <<<EOF
-    {$upColumnName}            {$v['DATA_TYPE']}           `form:"{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
-EOF;
-            }
+//            }
 
             $return = $return . $str . PHP_EOL;
         }
