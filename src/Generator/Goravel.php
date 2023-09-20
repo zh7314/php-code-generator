@@ -162,16 +162,17 @@ EOF;
             }
 
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
-            $str = '';
-            if ($v['DATA_TYPE'] == 'string') {
-                $str = <<<EOF
-{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
-EOF;
-            } else {
-                $str = <<<EOF
+
+//            $str = '';
+//            if ($v['DATA_TYPE'] == 'string') {
+//                $str = <<<EOF
+//{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
+//EOF;
+//            } else {
+            $str = <<<EOF
 {$lcTableName}.{$upColumnName} = request.{$upColumnName}
 EOF;
-            }
+//            }
 
             $return = $return . $str . PHP_EOL;
         }
@@ -184,10 +185,18 @@ EOF;
 
         $content = File::getFileContent(new self(), 'Model.template', self::getClassName());
 
-        $paramString = self::genModelParam($tableName, $column, $camel);
+        $hasImport = [];
+        $paramString = self::genModelParam($tableName, $column, $camel, $hasImport);
 
-        $search = ['{upTableName}', '{paramString}', '{tableName}'];
-        $replace = [$upTableName, $paramString, $tableName];
+        $localTime = '';
+        if ($hasImport['LocalTime'] > 0) {
+            $localTime = <<<EOF
+import "goravel/app/utils/local"
+EOF;
+        }
+
+        $search = ['{upTableName}', '{paramString}', '{tableName}', '{localTime}'];
+        $replace = [$upTableName, $paramString, $tableName, $localTime];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . $content;
@@ -195,7 +204,7 @@ EOF;
         File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
     }
 
-    public static function genModelParam(string $tableName, array $column, bool $camel = false)
+    public static function genModelParam(string $tableName, array $column, bool $camel = false, array &$hasImport = [])
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
@@ -203,11 +212,16 @@ EOF;
 
         $return = '';
         $array = MysqlOperation::transforColumnMysqlToGolang($column);
+
+        $hasImport['LocalTime'] = 0;
         foreach ($array as $v) {
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
 
             if ($v['COLUMN_NAME'] == 'id') {
                 continue;
+            }
+            if ($v['DATA_TYPE'] == 'local.LocalTime') {
+                $hasImport['LocalTime']++;
             }
 
             $str = '';
@@ -259,10 +273,18 @@ EOF;
 
         $content = File::getFileContent(new self(), 'Request.template', self::getClassName());
 
-        $paramString = self::genRequestParam($tableName, $column, $camel);
+        $hasImport = [];
+        $paramString = self::genRequestParam($tableName, $column, $camel, $hasImport);
 
-        $search = ['{upTableName}', '{paramString}'];
-        $replace = [$upTableName, $paramString];
+        $localTime = '';
+        if ($hasImport['LocalTime'] > 0) {
+            $localTime = <<<EOF
+import "goravel/app/utils/local"
+EOF;
+        }
+
+        $search = ['{upTableName}', '{paramString}', '{localTime}'];
+        $replace = [$upTableName, $paramString, $localTime];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . $content;
@@ -270,25 +292,39 @@ EOF;
         File::writeToFile($upTableName . self::$requestSuffix . self::$fileSuffix, self::$allRequestPath, $contents);
     }
 
-    public static function genRequestParam(string $tableName, array $column, bool $camel = false)
+    public static function genRequestParam(string $tableName, array $column, bool $camel = false, array &$hasImport = [])
     {
         $upTableName = ucfirst(Hump::camelize($tableName));
 
         $return = '';
         $array = MysqlOperation::transforColumnMysqlToGolang($column);
+
+        $hasImport['LocalTime'] = 0;
         foreach ($array as $v) {
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
+            if ($v['DATA_TYPE'] == 'local.LocalTime') {
+                $hasImport['LocalTime']++;
+            }
+
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
 
             if ($camel) {
                 $v['COLUMN_NAME'] = Hump::camelize($v['COLUMN_NAME']);
             }
 
-            $str = <<<EOF
+            $str = '';
+            if ($v['DATA_TYPE'] == 'string') {
+                $str = <<<EOF
     {$upColumnName}            {$v['DATA_TYPE']}           `form:"{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
+            } else {
+                $str = <<<EOF
+    {$upColumnName}            {$v['DATA_TYPE']}           `form:"{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+EOF;
+            }
+
             $return = $return . $str . PHP_EOL;
         }
         return $return;

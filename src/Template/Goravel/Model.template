@@ -1,8 +1,6 @@
 package models
 
-import (
-	"goravel/app/utils/local"
-)
+{localTime}
 
 const TableName{upTableName} = "{tableName}"
 

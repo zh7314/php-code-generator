@@ -1,6 +1,6 @@
 package admin
 
-import "goravel/app/utils/local"
+{localTime}
 
 type {upTableName}Request struct {
     ID            int64           `form:"id" json:"id"`                           // ID
