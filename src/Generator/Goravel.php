@@ -16,13 +16,13 @@ class Goravel extends Generator
     //应用根路径
     protected static $appPath = 'app';
     //控制器文件后缀
-    protected static $controllerSuffix = 'Controller';
+    protected static $controllerSuffix = '_controller';
     //服务文件后缀
-    protected static $serviceSuffix = 'Service';
+    protected static $serviceSuffix = '_service';
     //模型文件后缀
     protected static $modelSuffix = '';
     //模型文件后缀
-    protected static $requestSuffix = 'Request';
+    protected static $requestSuffix = '_request';
     //控制器文件路径
     protected static $controllerPath = 'http' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'admin';
     //服务文件路径
@@ -101,7 +101,7 @@ class Goravel extends Generator
 
         $contents = self::$fileHeaer . $content;
 
-        File::writeToFile($upTableName . self::$controllerSuffix . self::$fileSuffix, self::$allControllerPath, $contents);
+        File::writeToFile($tableName . self::$controllerSuffix . self::$fileSuffix, self::$allControllerPath, $contents);
     }
 
     public static function genService(string $tableName, array $column, bool $camel = false)
@@ -120,7 +120,7 @@ class Goravel extends Generator
 
         $contents = self::$fileHeaer . $content;
 
-        File::writeToFile($upTableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
+        File::writeToFile($tableName . self::$serviceSuffix . self::$fileSuffix, self::$allServicePath, $contents);
     }
 
     public static function genServiceIfParam(string $tableName, array $column, bool $camel = false)
@@ -201,7 +201,7 @@ EOF;
 
         $contents = self::$fileHeaer . $content;
 
-        File::writeToFile($upTableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
+        File::writeToFile($tableName . self::$modelSuffix . self::$fileSuffix, self::$allModelPath, $contents);
     }
 
     public static function genModelParam(string $tableName, array $column, bool $camel = false, array &$hasImport = [])
@@ -282,14 +282,13 @@ EOF;
 import "goravel/app/utils/local"
 EOF;
         }
-
         $search = ['{upTableName}', '{paramString}', '{localTime}'];
         $replace = [$upTableName, $paramString, $localTime];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . $content;
 
-        File::writeToFile($upTableName . self::$requestSuffix . self::$fileSuffix, self::$allRequestPath, $contents);
+        File::writeToFile($tableName . self::$requestSuffix . self::$fileSuffix, self::$allRequestPath, $contents);
     }
 
     public static function genRequestParam(string $tableName, array $column, bool $camel = false, array &$hasImport = [])
