@@ -1,5 +1,5 @@
 {
-  "name": "zx/code-generator",
+  "name": "zx/php-code-generator",
   "description": "php代码生成器",
   "type": "library",
   "license": "MIT",
