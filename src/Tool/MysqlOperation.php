@@ -139,9 +139,9 @@ class MysqlOperation
         } elseif ($type == 'date') {
             return 'string';
         } elseif ($type == 'datetime') {
-            return 'local.LocalTime';
+            return 'time.Time';
         } elseif ($type == 'time') {
-            return 'local.LocalTime';
+            return 'time.Time';
         } elseif ($type == 'decimal') {
             return 'float64';
         } elseif ($type == 'json') {

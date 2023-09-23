@@ -188,15 +188,22 @@ EOF;
         $hasImport = [];
         $paramString = self::genModelParam($tableName, $column, $camel, $hasImport);
 
-        $localTime = '';
-        if ($hasImport['LocalTime'] > 0) {
-            $localTime = <<<EOF
+        $import = '';
+        if ($hasImport['time'] > 0) {
+            $import = <<<EOF
+import (
+	"goravel/app/utils/local"
+	"time"
+)
+EOF;
+        } else {
+            $import = <<<EOF
 import "goravel/app/utils/local"
 EOF;
         }
 
-        $search = ['{upTableName}', '{paramString}', '{tableName}', '{localTime}'];
-        $replace = [$upTableName, $paramString, $tableName, $localTime];
+        $search = ['{upTableName}', '{paramString}', '{tableName}', '{import}'];
+        $replace = [$upTableName, $paramString, $tableName, $import];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . $content;
@@ -213,21 +220,21 @@ EOF;
         $return = '';
         $array = MysqlOperation::transforColumnMysqlToGolang($column);
 
-        $hasImport['LocalTime'] = 0;
+        $hasImport['time'] = 0;
         foreach ($array as $v) {
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
 
             if ($v['COLUMN_NAME'] == 'id') {
                 continue;
             }
-            if ($v['DATA_TYPE'] == 'local.LocalTime') {
-                $hasImport['LocalTime']++;
+            if ($v['DATA_TYPE'] == 'time.Time') {
+                $hasImport['time']++;
             }
 
             $str = '';
             if ($v['COLUMN_NAME'] == 'create_at' || $v['COLUMN_NAME'] == 'update_at') {
                 $str = <<<EOF
-    {$upColumnName}            {$v['DATA_TYPE']}           `gorm:"-" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+    {$upColumnName}            local.LocalTime           `gorm:"-" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
             } else {
                 $str = <<<EOF
@@ -276,14 +283,14 @@ EOF;
         $hasImport = [];
         $paramString = self::genRequestParam($tableName, $column, $camel, $hasImport);
 
-        $localTime = '';
-        if ($hasImport['LocalTime'] > 0) {
-            $localTime = <<<EOF
-import "goravel/app/utils/local"
+        $import = '';
+        if ($hasImport['time'] > 0) {
+            $import = <<<EOF
+import "time"
 EOF;
         }
-        $search = ['{upTableName}', '{paramString}', '{localTime}'];
-        $replace = [$upTableName, $paramString, $localTime];
+        $search = ['{upTableName}', '{paramString}', '{import}'];
+        $replace = [$upTableName, $paramString, $import];
         $content = str_replace($search, $replace, $content);
 
         $contents = self::$fileHeaer . $content;
@@ -298,13 +305,13 @@ EOF;
         $return = '';
         $array = MysqlOperation::transforColumnMysqlToGolang($column);
 
-        $hasImport['LocalTime'] = 0;
+        $hasImport['time'] = 0;
         foreach ($array as $v) {
             if (in_array($v['COLUMN_NAME'], self::$notDeal)) {
                 continue;
             }
-            if ($v['DATA_TYPE'] == 'local.LocalTime') {
-                $hasImport['LocalTime']++;
+            if ($v['DATA_TYPE'] == 'time.Time') {
+                $hasImport['time']++;
             }
 
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));

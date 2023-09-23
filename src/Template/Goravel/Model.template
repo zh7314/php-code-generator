@@ -1,6 +1,6 @@
 package models
 
-{localTime}
+{import}
 
 const TableName{upTableName} = "{tableName}"
 
