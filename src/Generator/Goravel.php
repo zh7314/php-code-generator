@@ -192,13 +192,13 @@ EOF;
         if ($hasImport['time'] > 0) {
             $import = <<<EOF
 import (
-	"goravel/app/utils/local"
+	"github.com/goravel/framework/support/carbon"
 	"time"
 )
 EOF;
         } else {
             $import = <<<EOF
-import "goravel/app/utils/local"
+import "github.com/goravel/framework/support/carbon"
 EOF;
         }
 
@@ -231,7 +231,7 @@ EOF;
             $str = '';
             if ($v['COLUMN_NAME'] == 'create_at' || $v['COLUMN_NAME'] == 'update_at') {
                 $str = <<<EOF
-    {$upColumnName}            local.LocalTime           `gorm:"-" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+    {$upColumnName}            carbon.DateTime           `gorm:"column:{$v['COLUMN_NAME']};->" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
             } else {
 
