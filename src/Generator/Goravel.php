@@ -227,9 +227,6 @@ EOF;
             if ($v['COLUMN_NAME'] == 'id') {
                 continue;
             }
-            if ($v['DATA_TYPE'] == 'time.Time') {
-                $hasImport['time']++;
-            }
 
             $str = '';
             if ($v['COLUMN_NAME'] == 'create_at' || $v['COLUMN_NAME'] == 'update_at') {
@@ -237,6 +234,11 @@ EOF;
     {$upColumnName}            local.LocalTime           `gorm:"-" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
             } else {
+
+                if ($v['DATA_TYPE'] == 'time.Time') {
+                    $hasImport['time']++;
+                }
+
                 $str = <<<EOF
     {$upColumnName}            {$v['DATA_TYPE']}           `gorm:"column:{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
