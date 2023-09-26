@@ -139,7 +139,7 @@ class Goravel extends Generator
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
             $str = <<<EOF
 if !gconv.IsEmpty(request.{$upColumnName}) {
-	orm.Where("{$v['COLUMN_NAME']}", request.{$upColumnName})
+	orm = orm.Where("{$v['COLUMN_NAME']}", request.{$upColumnName})
 }
 EOF;
 
