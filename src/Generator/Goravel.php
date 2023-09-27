@@ -166,11 +166,15 @@ EOF;
             $str = '';
             if ($v['DATA_TYPE'] == 'string') {
                 $str = <<<EOF
-{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
+	if !gconv.IsEmpty(request.{$upColumnName}) {
+		{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
+	}
 EOF;
             } else {
                 $str = <<<EOF
-{$lcTableName}.{$upColumnName} = request.{$upColumnName}
+	if !gconv.IsEmpty(request.{$upColumnName}) {
+		{$lcTableName}.{$upColumnName} = request.{$upColumnName}
+	}
 EOF;
             }
 
@@ -234,11 +238,9 @@ EOF;
     {$upColumnName}            carbon.DateTime           `gorm:"column:{$v['COLUMN_NAME']};->" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
             } else {
-
                 if ($v['DATA_TYPE'] == 'time.Time') {
                     $hasImport['time']++;
                 }
-
                 $str = <<<EOF
     {$upColumnName}            {$v['DATA_TYPE']}           `gorm:"column:{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;

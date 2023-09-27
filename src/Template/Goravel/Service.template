@@ -82,9 +82,16 @@ func (r *{upTableName}Service) Add(request requests.{upTableName}Request) (bool,
 
 func (r *{upTableName}Service) Save(request requests.{upTableName}Request) (bool, error) {
 
-	var {lcTableName} models.{upTableName}
+	if gconv.IsEmpty(request.ID) {
+    	return false, errors.New("请求不能为空")
+    }
 
-	{lcTableName}.ID = request.ID
+	var {lcTableName} models.{upTableName}
+    err := facades.Orm().Query().Where("id", request.ID).FirstOrFail(&{lcTableName})
+    if err != nil {
+    	return false, errors.New("数据不存在")
+    }
+
 	{paramString}
 
 	err := facades.Orm().Query().Save(&{lcTableName})
