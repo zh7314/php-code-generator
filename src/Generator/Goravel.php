@@ -137,11 +137,21 @@ class Goravel extends Generator
             }
 
             $upColumnName = ucfirst(Hump::camelize($v['COLUMN_NAME']));
-            $str = <<<EOF
+
+            $str ='';
+            if ($v['DATA_TYPE'] == 'time.Time') {
+                $str = <<<EOF
+if !request.{$upColumnName}.IsZero() {
+	orm = orm.Where("{$v['COLUMN_NAME']}", request.{$upColumnName})
+}
+EOF;
+            }else{
+                $str = <<<EOF
 if !gconv.IsEmpty(request.{$upColumnName}) {
 	orm = orm.Where("{$v['COLUMN_NAME']}", request.{$upColumnName})
 }
 EOF;
+            }
 
             $return = $return . $str . PHP_EOL;
         }
@@ -168,6 +178,12 @@ EOF;
                 $str = <<<EOF
 	if !gconv.IsEmpty(request.{$upColumnName}) {
 		{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
+	}
+EOF;
+            } elseif ($v['DATA_TYPE'] == 'time.Time') {
+                $str = <<<EOF
+	if !request.{$upColumnName}.IsZero() {
+		{$lcTableName}.{$upColumnName} = request.{$upColumnName}
 	}
 EOF;
             } else {
