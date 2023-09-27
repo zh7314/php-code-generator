@@ -94,7 +94,7 @@ func (r *{upTableName}Service) Save(request requests.{upTableName}Request) (bool
 
 	{paramString}
 
-	err := facades.Orm().Query().Save(&{lcTableName})
+	err = facades.Orm().Query().Save(&{lcTableName})
 	if err != nil {
 		return false, err
 	}
