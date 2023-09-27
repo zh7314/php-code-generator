@@ -26,9 +26,9 @@ func (r *{upTableName}Service) GetList(request requests.{upTableName}Request) (m
 	{ifParamString}
 
 	if request.Page > 0 && request.PageSize > 0 {
-		orm.Order("id desc").Paginate(request.Page, request.PageSize, &list, &count)
+		orm.Order("sort asc").Order("id desc").Paginate(request.Page, request.PageSize, &list, &count)
 	} else {
-		orm.Order("id desc").Get(&list)
+		orm.Order("sort asc").Order("id desc").Get(&list)
 		count = int64(len(list))
 	}
 
@@ -47,7 +47,7 @@ func (r *{upTableName}Service) GetAll(request requests.{upTableName}Request) ([]
 
     {ifParamString}
 
-	orm.Order("id desc").Get(&list)
+	orm.Order("sort asc").Order("id desc").Get(&list)
 
 	return list, nil
 }
