@@ -18,7 +18,7 @@ func New{upTableName}Service() *{upTableName}Service {
 
 func (r *{upTableName}Service) GetList(request requests.{upTableName}Request) (map[string]interface{}, error) {
 
-	var list []models.{upTableName}
+	var list []*models.{upTableName}
 	var count int64
 
 	orm := facades.Orm().Query()
@@ -41,7 +41,7 @@ func (r *{upTableName}Service) GetList(request requests.{upTableName}Request) (m
 
 func (r *{upTableName}Service) GetAll(request requests.{upTableName}Request) ([]models.{upTableName}, error) {
 
-	var list []models.{upTableName}
+	var list []*models.{upTableName}
 
 	orm := facades.Orm().Query()
 
