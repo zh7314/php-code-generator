@@ -177,7 +177,7 @@ EOF;
             if ($v['DATA_TYPE'] == 'string') {
                 $str = <<<EOF
 	if !gconv.IsEmpty(request.{$upColumnName}) {
-		{$lcTableName}.{$upColumnName} = html.EscapeString(&request.{$upColumnName})
+		{$lcTableName}.{$upColumnName} = html.EscapeString(request.{$upColumnName})
 	}
 EOF;
             } elseif ($v['DATA_TYPE'] == 'time.Time') {
@@ -189,7 +189,7 @@ EOF;
             } else {
                 $str = <<<EOF
 	if !gconv.IsEmpty(request.{$upColumnName}) {
-		{$lcTableName}.{$upColumnName} = &request.{$upColumnName}
+		{$lcTableName}.{$upColumnName} = request.{$upColumnName}
 	}
 EOF;
             }
@@ -261,7 +261,7 @@ EOF;
 EOF;
                 } else {
                     $str = <<<EOF
-    {$upColumnName}            *{$v['DATA_TYPE']}           `gorm:"column:{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
+    {$upColumnName}            {$v['DATA_TYPE']}           `gorm:"column:{$v['COLUMN_NAME']}" json:"{$v['COLUMN_NAME']}"`           // comment {$v['COLUMN_COMMENT']}
 EOF;
                 }
             }
