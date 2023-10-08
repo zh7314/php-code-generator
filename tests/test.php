@@ -10,12 +10,14 @@ include_once './../src/Generator/Laravel.php';
 include_once './../src/Generator/LaravelSoftDelZx.php';
 include_once './../src/Generator/Webman.php';
 include_once './../src/Generator/Goravel.php';
+include_once './../src/Generator/Drogon.php';
 
 use ZX\Tool\MysqlOperation;
 use ZX\Generator\Laravel;
 use ZX\Generator\LaravelSoftDelZx;
 use ZX\Generator\Webman;
 use ZX\Generator\Goravel;
+use ZX\Generator\Drogon;
 
 $param = [
     'type' => 'mysql',
@@ -63,13 +65,12 @@ MysqlOperation::setConnection($param);
 //Goravel::genRouter("table_name");
 
 /*
- * todo
  * drogon 生成器,配合使用项目: https://github.com/zh7314/zx-drogon-website
  * $camel true => case camel,true => case snake
  */
 
-//Drogon::genAllTable();
-//Drogon::genAllRouter();
+Drogon::genAllTable();
+Drogon::genAllRouter();
 
 //Drogon::genTable("table_name");
 //Drogon::genRouter("table_name");

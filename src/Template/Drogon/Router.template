@@ -1,0 +1,8 @@
+router.Prefix("{camelizeTableName}").Group(func(router1 route.Router) {
+			router1.Post("/getList", admin.New{upTableName}Controller().GetList)
+			router1.Post("/getAll", admin.New{upTableName}Controller().GetAll)
+			router1.Post("/getOne", admin.New{upTableName}Controller().GetOne)
+			router1.Post("/add", admin.New{upTableName}Controller().Add)
+			router1.Post("/save", admin.New{upTableName}Controller().Save)
+			router1.Post("/delete", admin.New{upTableName}Controller().Delete)
+		})
